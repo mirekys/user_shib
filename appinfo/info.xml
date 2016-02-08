@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<info>
+	<id>user_shib</id>
+	<name>Shibboleth user and group backend</name>
+	<description>This application enables federated Shibboleth
+	 authentication and automatic user and group provisioning
+	 based on Shibboleth attributes. This application requires
+	 a configured and running Shibboleth backend (shibd).
+	</description>
+	<licence>AGPL</licence>
+	<author>Miroslav Bauer @ CESNET</author>
+	<version>0.0.1</version>
+	<namespace>User_Shib</namespace>
+	<category>other</category>
+	<types>
+		<prelogin/>
+		<authentication/>
+	</types>
+	<dependencies>
+		<owncloud min-version="8.2" />
+	</dependencies>
+</info>

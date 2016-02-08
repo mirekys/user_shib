@@ -1,0 +1,17 @@
+#user_shib_personal {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#user_shib_personal > span {
+	margin: 10px;
+	padding: 10px;
+}
+
+#user_shib_personal > h2 {
+	margin-top: 22px;
+}
+
+#user_shib_personal > form {
+	padding-top: 10px;
+}
