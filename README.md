@@ -21,7 +21,6 @@ must enforce Shibboleth session at least on the following Location:
 	ShibUseHeaders Off
 	ShibExportAssertion On
 	ShibRequestSetting requireSession 1
-	require shib-plugin /gpfs/oc-test/etc/accessControl.xml # this is optional
 </Location>
 ```
 
