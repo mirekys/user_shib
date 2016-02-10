@@ -57,6 +57,7 @@ class Application extends App {
 				$c->query('AppName'),
 				$c->query('UserManager'),
 				$c->query('UserAttributeManager'),
+				$c->query('IdentityMapper'),
 				$c->query('Logger'),
 				$c->query('BackendConfig'),
 				$c->query('SecureGenerator')

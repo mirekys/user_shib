@@ -24,11 +24,12 @@ class SessionController extends Controller {
 	private $logCtx;
 	private $userSession;
 
-	public function __construct($AppName, IRequest $request,
+	public function __construct($appName, IRequest $request,
 				    IURLGenerator $urlGenerator,
 				    $logger, $userSession){
-		parent::__construct($AppName, $request);
+		parent::__construct($appName, $request);
 
+		$this->appName = $appName;
 		$this->logger = $logger;
 		$this->urlGenerator = $urlGenerator;
 		$this->userSession = $userSession;
@@ -53,6 +54,8 @@ class SessionController extends Controller {
 			$this->logCtx
 		);
 
+		$redirectUrl = 'index.php';
+
 		$result = $this->userSession->login('', '');
 
 		$user = $this->userSession->getUser();
@@ -62,8 +65,12 @@ class SessionController extends Controller {
 
 		$uid = $user->getUID();
 		if ($result && $uid) {
-			$this->logger->info('Logged in user: '.
-				$this->userSession->getUser()->getUID(), $this->logCtx);
+			$this->logger->info('Logged in user: '. $uid, $this->logCtx);
+			// Prevent redirect loop - do not redirect to itself
+			if (strpos($redirectUrl, $this->appName) !== false) {
+				$redirectUrl = 'index.php';
+			}
+
 			/**
 			 * Absolute URL is needed to prevent redirection
 			 * to unvalidated URLs (to foreign domains).

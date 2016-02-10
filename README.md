@@ -24,9 +24,9 @@ must enforce Shibboleth session at least on the following Location:
 </Location>
 ```
 
-The rest of the ownCloud could be covered by a Shibboleth [lazy session](https://aai-demo.switch.ch/lazy/),
-since we establish a proper ownCloud authenticated session on the login URL above. We rely on ownCloud here
-to determine, if it needs authentication or not.
+Since we establish a proper ownCloud authenticated session on the login URL above,
+the rest of the ownCloud could be covered by a Shibboleth [lazy session](https://aai-demo.switch.ch/lazy/),
+We rely on the ownCloud here to determine, if it needs authentication or not.
 
 ```
 <Location /owncloud>
@@ -64,7 +64,7 @@ to ownCloud and some backend options. The meaning of each option is following:
 * **Backend Activated** - Disabling it disables authentication using this user backend, but keeps everything else in place.
 * **Autocreate accounts** - Create new account on user's first login.
 * **Update user info on login** - Updates user's mail, display name, last seen and other metadata on each login.
-* **Protected Groups** - Do not override this OC groups by Shibboleth attribute _Groups__[_not implemented yet_].
+* **Protected Groups** - Do not override this OC groups by Shibboleth attribute _Groups_ [_not implemented yet_].
 
 ## Personal configuration
 

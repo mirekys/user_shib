@@ -18,16 +18,19 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 	private $backendConfig;
 	private $userManager;
 	private $userAttrManager;
+	private $identityMapper;
 	private $secureGen;
 	private $logCtx;
 
 	public function __construct($appName, $userManager, $userAttrManager,
-				    $logger, $backendConfig, $secureGen) {
+				    $identityMapper, $logger, $backendConfig,
+				    $secureGen) {
 		$this->logger = $logger;
 		$this->appName = $appName;
 		$this->backendConfig = $backendConfig;
 		$this->userManager = $userManager;
 		$this->userAttrManager = $userAttrManager;
+		$this->identityMapper = $identityMapper;
 		$this->secureGen = $secureGen;
 		$this->possibleActions = array(
 			self::CHECK_PASSWORD => 'checkPassword',
@@ -64,7 +67,7 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 					'Creating new account: '.$uid,
 					$this->logCtx);
 				$this->userManager->createUser(
-					$uid, $secureGen->generate(30));
+					$uid, $this->secureGen->generate(30));
 			}
 		}
 		$this->logger->debug(sprintf('Logging in user: %s (%s)',
@@ -87,5 +90,26 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 	 */
 	public function getBackendName() {
 		return 'Shibboleth';
+	}
+
+	/**
+	 * Get display names of users matching a pattern
+	 *
+	 * @param string $search
+	 * @param int $limit
+	 * @param int $offset
+	 * @return array an array of all displayNames (value) and the corresponding uids (key)
+	 */
+	public function getDisplayNames($search = '',
+					$limit = null, $offset = null) {
+		$displayNames = array();
+		$identities = $this->identityMapper->findIdentities(
+				$search, $limit, $offset);
+		foreach($identities as $identity) {
+			$ocUid = $identity->getOcUid();
+			$dn = \OCP\User::getDisplayName($ocUid);
+			$displayNames[$ocUid] = $dn;
+		}
+		return $displayNames;
 	}
 }

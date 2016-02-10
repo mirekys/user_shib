@@ -100,7 +100,7 @@ class SettingsController extends Controller {
 				'autocreate' => $autocreate,
 				'autoupdate' => $autoupdate,
 				'protected_groups' => $protectedGroups,
-				'required_attrs' => $rqattrs
+				'required_attrs' => $requiredAttrs
 			),
 			'blank'
 		);

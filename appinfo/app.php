@@ -50,7 +50,7 @@ if (array_key_exists('redirect_url', $urlParams)) {
 // TODO: Couldn't find an \OCP way for achieving this
 \OC_App::registerLogIn(
 	array(
-		'name' => $c->query('L10N')->t('eduID Federated Login'),
+		'name' => $c->query('L10N')->t('Shibboleth Login'),
 		'href' => $loginRoute
 	)
 );

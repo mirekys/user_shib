@@ -113,6 +113,21 @@ class IdentityMapper extends Mapper {
 		return $identity;
 	}
 
+        /**
+         * Finds all identities by its $samlEmail or $samlUid
+	 *
+         * @param string $search pattern
+         * @param int $limit the maximum number of rows
+         * @param int $offset from which row we want to start
+         * @return array(\OCA\User_Shib\Db\Identity) identities found
+         */
+        public function findIdentities($search = '', $limit=null, $offset=null) {
+		$sql = sprintf('SELECT * FROM `%s` WHERE LOWER(`saml_uid`) = LOWER(?)'
+			. ' OR LOWER(`saml_email`) = LOWER(?)',
+			$this->getTableName());
+		return $this->findEntities($sql,
+			array($search, $search), $limit, $offset);
+	}
 
 	/**
 	 * Removes a SAML identity mapping to OC uid
@@ -141,9 +156,6 @@ class IdentityMapper extends Mapper {
 			$identity->setSamlEmail($samlEmail);
 			$identity->setlastSeen($lastSeen);
 			$this->update($identity);
-		} else {
-			$this->addIdentity(
-				$samlUid, $samlEmail, $lastSeen, $samlUid);
 		}
 	}
 
