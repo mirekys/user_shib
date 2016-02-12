@@ -20,7 +20,7 @@ $c = $app->getContainer();
 // It is not necessary to activate Shibboleth backend
 // for these URLs. The list comes from here:
 // https://doc.owncloud.com/server/8.2/admin_manual/enterprise_user_management/user_auth_shibboleth.html#apache-configuration
-$nonShibUrls = '/'
+$nonShibUrls = '^/'
 . '(status.php'
 . '|remote.php'
 . '|index.php/s/'
@@ -38,7 +38,9 @@ $nonShibUrls = '/'
 . '|.*\.css$'
 . '|.*\.js$'
 . '|.*\.woff$'
+// Following routes requies this backend to be inactive
 . '|index.php/settings/personal/changepassword$'
+. '|ocs'
 . ')';
 $nonShibRegex = '/' . str_replace('/', '\/', $nonShibUrls) . '/i';
 
@@ -88,5 +90,5 @@ if (!\OC::$CLI && !preg_match($nonShibRegex, $requestUri) ) {
 	\OCP\App::registerAdmin($c->query('AppName'), 'admin');
 	\OCP\App::registerPersonal($c->query('AppName'), 'personal');
 } else {
-	$c->query('Logger')->debug('', 'NOT Activating User_shib on:' . $requestUri);
+	$c->query('Logger')->debug('NOT Activating User_shib on:' . $requestUri);
 }
