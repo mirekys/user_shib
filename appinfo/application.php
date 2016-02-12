@@ -12,6 +12,7 @@
 namespace OCA\User_Shib\AppInfo;
 
 use OCP\AppFramework\App;
+use OC\AppFramework\Utility\TimeFactory;
 use OCA\User_shib\UserShib;
 use OCA\User_shib\UserHooks;
 use OCA\User_shib\UserMailer;
@@ -35,6 +36,7 @@ class Application extends App {
 				$c->query('Request'),
 				$c->query('UserSession')->getUser()->getUID(),
 				$c->query('AppConfig'),
+				$c->query('OcConfig'),
 				$c->query('L10N')
 			);
 		});
@@ -111,11 +113,14 @@ class Application extends App {
 			return new UserMailer(
 				$c->query('AppName'),
 				$c->query('L10N'),
+				$c->query('OcConfig'),
 				$c->query('Mailer'),
 				$c->query('Defaults'),
 				$c->query('Logger'),
 				$c->query('DefaultMailAddress'),
-				$c->query('URLGenerator')
+				$c->query('URLGenerator'),
+				$c->query('SecureGenerator'),
+				$c->query('TimeFactory')
 			);
 		});
 
@@ -170,6 +175,10 @@ class Application extends App {
 		$container->registerService('SecureGenerator', function($c) {
 			return $c->query('ServerContainer')->getSecureRandom()
 				->getMediumStrengthGenerator();
+		});
+
+		$container->registerService('TimeFactory', function($c) {
+			return new TimeFactory();
 		});
 
 		/**

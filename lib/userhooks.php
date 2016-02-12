@@ -112,8 +112,7 @@ class UserHooks {
 	 */
 	private function onPostSetPassword($user, $password, $recoverPassword) {
 		$uid = $user->getUID();
-		$this->mailer->mailPasswordChange($uid,
-			$this->userAttrManager->getEmail());
+		$this->mailer->mailPasswordChange($uid);
 	}
 
 	/**

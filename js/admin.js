@@ -14,7 +14,7 @@
 
 $(document).ready(function() {
 	
-	$('#user_shib_mapping_submit').click(function(event){
+	$('#user_shib_mapping_submit').click(function(event) {
 		event.preventDefault();	
 		$('#user_shib_mapping_submit').attr('disabled', true);
 		OC.msg.startAction('#user_shib_mapping_msg',
@@ -42,7 +42,7 @@ $(document).ready(function() {
 		);
 	});
 
-	$('#user_shib_backend_submit').click(function(event){
+	$('#user_shib_backend_submit').click(function(event) {
 		event.preventDefault();
 		$('#user_shib_backend_submit').attr('disabled', true);
 		OC.msg.startAction('#user_shib_backend_msg',

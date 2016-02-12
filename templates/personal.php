@@ -15,9 +15,20 @@ style('user_shib', 'style');
 
 <div class="section" id="user_shib_personal">
 	<h2><?php p($l->t('Client login credentials')); ?></h2>
-	<span class="warning">
-		<?php p($l->t('Set password for your clients here')); ?>
+	<span>
+		<?php p($l->t('Set password for your desktop/mobile clients here')); ?>
 	</span>
 	<h2>Username</h2>
-	<span><?php p($_['username']); ?></span>
+	<span id="client_username"><?php p($_['username']); ?></span>
+	<input id="reset_client_password" type="submit"
+		value="<?php if(! $_['link_sent']) {
+			p($l->t('Reset client password'));
+		} else {
+			p($l->t('Reset link sent'));
+		} ?>"
+		<?php if($_['link_sent']) {
+			print_unescaped('disabled="disabled"');
+		} ?> >
+	</input>
+
 </div>

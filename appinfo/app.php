@@ -38,8 +38,8 @@ $nonShibUrls = '^/'
 . '|.*\.css$'
 . '|.*\.js$'
 . '|.*\.woff$'
-// Following routes requies this backend to be inactive
-. '|index.php/settings/personal/changepassword$'
+// Following routes requires this backend to be inactive
+. '|index.php/settings/personal/changepassword'
 . '|ocs'
 . ')';
 $nonShibRegex = '/' . str_replace('/', '\/', $nonShibUrls) . '/i';

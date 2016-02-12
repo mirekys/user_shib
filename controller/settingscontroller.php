@@ -19,13 +19,15 @@ use OCP\AppFramework\Controller;
 class SettingsController extends Controller {
 
 	private $config;
+	private $ocConfig;
 	private $userid;
 	private $l10n;
 
 	public function __construct($appName, IRequest $request, $userid,
-				    IAppConfig $appConfig, $l10n) {
+				    IAppConfig $appConfig, $ocConfig, $l10n) {
 		parent::__construct($appName, $request);
 		$this->config = $appConfig;
+		$this->ocConfig = $ocConfig;
 		$this->userid = $userid;
 		$this->l10n = $l10n;
 	}
@@ -40,7 +42,12 @@ class SettingsController extends Controller {
 		return new TemplateResponse(
 			$this->appName,
 			'personal',
-			array('username' => $this->userid),
+			array(
+				'username' => $this->userid,
+				'link_sent' => $this->ocConfig->getUserValue(
+					$this->userid, 'owncloud',
+					'lostpassword', false)
+			),
 			'blank'
 		);
 	}
