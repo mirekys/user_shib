@@ -54,8 +54,6 @@ class SessionController extends Controller {
 			$this->logCtx
 		);
 
-		$redirectUrl = 'index.php';
-
 		$result = $this->userSession->login('', '');
 
 		$user = $this->userSession->getUser();

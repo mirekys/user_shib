@@ -91,7 +91,6 @@ class UserHooks {
 	 */
 	private function onPostCreateUser($user, $password) {
 		$createdUid = $user->getUID();
-		$samlUid = $this->userAttrManager->getShibUid();
 		$loggedUid = $this->userAttrManager->getOcUid();
 
 		if ($loggedUid !== $createdUid) { return; }

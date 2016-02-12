@@ -14,6 +14,6 @@
 
 $(document).ready(function() {
 	$('#user_shib_personal').after($('#passwordform'));
-	$('#pass1').attr('placeholder', t('user_shib', 'Client password'));
-	$('#pass2').attr('placeholder', t('user_shib', 'Repeat password'));
+	$('#pass1').attr('placeholder', t('user_shib', 'Old client password'));
+	$('#pass2').attr('placeholder', t('user_shib', 'New client password'));
 });

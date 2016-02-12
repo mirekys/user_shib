@@ -15,8 +15,6 @@ $application = new Application();
 $application->registerRoutes($this, array(
 	'routes' => array(
 		array('name' => 'session#login', 'url' => '/login', 'verb' => 'GET'),
-		array('name' => 'session#logout',
-			'url' => '/logout', 'verb' => 'GET'),
 		array('name' => 'settings#saveMappings',
 			'url' => '/ajax/admin.php/mapping', 'verb' => 'POST'),
 		array('name' => 'settings#saveBackendConfig',

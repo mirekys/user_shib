@@ -45,12 +45,15 @@ class UserMailer {
 			'username' => $uid,
 			'url' => $this->urlGenerator->getAbsoluteURL('/')
 		);
+		$subject = $this->l10n->t('Your %s account was created',
+				[$this->defaults->getName()]);
+
 		$html = new TemplateResponse('settings',
 				'email.new_user', $mailData, 'blank');
 		$plain = new TemplateResponse('settings',
 				'email.new_user_plain_text',
 				$mailData, 'blank');
-		$this->sendMail($uid, $emailAddress, $html, $plain);
+		$this->sendMail($uid, $emailAddress, $subject, $html, $plain);
 	}
 
 	/**
@@ -64,12 +67,13 @@ class UserMailer {
 			'username' => $uid,
 			'url' => $this->urlGenerator->getAbsoluteURL('/')
 		);
+		$subject = $this->l10n->t('Your password has been changed');
 		$html = new TemplateResponse('user_shib',
 				'email.password_change', $mailData, 'blank');
 		$plain = new TemplateResponse('user_shib',
 				'email.password_change_plain_text',
 				$mailData, 'blank');
-		$this->sendMail($uid, $emailAddress, $html, $plain);
+		$this->sendMail($uid, $emailAddress, $subject, $html, $plain);
 	}
 
 	/**
@@ -80,11 +84,8 @@ class UserMailer {
 	 * @param \OCP\AppFramework\Http\TemplateResponse $plainTemplate mail
 	 * content in plaintext
 	 */
-	private function sendMail($uid, $emailAddress,
+	private function sendMail($uid, $emailAddress, $subject,
 				  $htmlTemplate, $plainTemplate) {
-
-		$subject = $this->l10n->t('Your %s account was created',
-				[$this->defaults->getName()]);
 		try {
 			$message = $this->mailer->createMessage();
 			$message->setTo([$emailAddress => $uid]);

@@ -175,7 +175,6 @@ class Application extends App {
 		/**
 		 * Hooks
 		 */
-
 		$container->registerService('UserHooks', function($c) {
 			return new UserHooks(
 				$c->query('AppName'),

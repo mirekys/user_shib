@@ -44,9 +44,14 @@ class UserAttributeManager {
 		// Shibboleth/SAML uid is always required
 		$shibUid = $this->getShibUid();
 		if (! $shibUid ) { return false; }
-		// TODO: move email to $backendConfig['required_attrs']
-		if (! $this->getEmail()) { return false; }
-
+		// TODO: Move email to $backendConfig['required_attrs']
+		// TODO: Require email for all users (not only newly created)
+		// when all IdP's will provide it for us. Then move getOcUid
+		// call to the end of this method.
+		$ocUid = $this->getOcUid();
+		if (! $this->getEmail() && ! \OCP\User::userExists($ocUid)) {
+			return false;
+		}
 		// Check for additional required attributes
 		$missingAttrs = '';
 		foreach ($this->backendConfig['required_attrs'] as &$attr) {
@@ -60,7 +65,7 @@ class UserAttributeManager {
 				$shibUid, $missingAttrs), $this->logCtx);
 			return false;
 		}
-		return $this->getOcUid();
+		return $ocUid;
 	}
 
 	/**
@@ -82,17 +87,14 @@ class UserAttributeManager {
 	 * @return string|false corresponding OC uid or false if not found
 	 */
 	public function getOcUid() {
-		$ocUid = $this->identityMapper->getOcUid($this->getShibUid());
+		$shibUid = $this->getShibUid();
+		if (! $shibUid) { return false; }
+
+		$ocUid = $this->identityMapper->getOcUid($shibUid);
 		if (! $ocUid && $this->backendConfig['autocreate']) {
-			$shibUid = $this->getShibUid();
-			if ($shibUid) {
-				$this->identityMapper->addIdentity(
-					$shibUid,
-					$this->getEmail(), time(),
-					$shibUid);
-				return $this->identityMapper->getOcUid(
-					$this->getShibUid());
-			}
+			$this->identityMapper->addIdentity(
+				$shibUid, $this->getEmail(), time(), $shibUid);
+			$ocUid = $this->identityMapper->getOcUid($shibUid);
 		}
 		return $ocUid;
 	}
@@ -118,7 +120,7 @@ class UserAttributeManager {
 			$fn = $this->getAttributeFirst('firstname');
 			$sn = $this->getAttributeFirst('surname');
 			if ($fn) { $dn = $fn; }
-			if ($sn) { $dn = $dn . ' ' . $sn; }
+			if ($sn) { $dn .= ' ' . $sn; }
 		}
 		return $dn;
 	}
@@ -135,6 +137,8 @@ class UserAttributeManager {
 	/**
 	 * Get the user affiliation from $_SERVER environment
 	 *
+	 * @deprecated This attribute is not needed and will be
+	 * removed in next versions
 	 * @return string|false if attribute not found
 	 */
 	public function getAffiliation() {

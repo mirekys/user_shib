@@ -20,6 +20,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 class IdentityMapper extends Mapper {
 
 	private $logger;
+	private $logCtx;
 	private $appName;
 	private $userManager;
 	protected $db;
@@ -54,10 +55,10 @@ class IdentityMapper extends Mapper {
 		$identity->setSamlEmail($samlEmail);
 		$identity->setLastSeen($samlLastSeen);
 		$identity->setOcUid($ocUid);
+		$this->logger->info(sprintf('Creating identity'
+			.' mapping: %s -> %s.', $samlUid, $ocUid),
+			$this->logCtx);
 		try {
-			$this->logger->info(sprintf('Creating identity'
-				.' mapping: %s -> %s.', $samlUid, $ocUid),
-				$this->logCtx);
 			$this->insert($identity);
 		} catch (UniqueConstraintViolationException $e) {
 			$this->logger->error(sprintf('Failed to create mapping:'
