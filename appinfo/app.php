@@ -48,8 +48,6 @@ $request = $c->query('Request');
 $requestUri = $request->getRequestUri();
 
 if (!\OC::$CLI && !preg_match($nonShibRegex, $requestUri) ) {
-	$c->query('Logger')->debug('Activating User_shib for: ' . $requestUri);
-
 	// Register itself as User Backend
 	$c->query('UserManager')->registerBackend($c->query('UserBackend'));
 
@@ -83,12 +81,10 @@ if (!\OC::$CLI && !preg_match($nonShibRegex, $requestUri) ) {
 	// TODO: Couldn't find an \OCP way for achieving this
 	\OC_App::registerLogIn(
 		array(
-			'name' => $c->query('L10N')->t('Shibboleth Login'),
+			'name' => 'Shibboleth Login',
 			'href' => $loginRoute
 		)
 	);
 	\OCP\App::registerAdmin($c->query('AppName'), 'admin');
 	\OCP\App::registerPersonal($c->query('AppName'), 'personal');
-} else {
-	$c->query('Logger')->debug('NOT Activating User_shib on:' . $requestUri);
 }

@@ -71,8 +71,8 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 				$this->userManager->createUser(
 					$uid, $this->secureGen->generate(21,
 						ISecureRandom::CHAR_DIGITS
-                        			. ISecureRandom::CHAR_LOWER
-                        			. ISecureRandom::CHAR_UPPER
+						. ISecureRandom::CHAR_LOWER
+						. ISecureRandom::CHAR_UPPER
 					));
 			}
 		}

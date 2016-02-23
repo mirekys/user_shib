@@ -11,7 +11,6 @@
 
 /*global OC, $ */
 
-
 $(document).ready(function() {
 	
 	$('#user_shib_mapping_submit').click(function(event) {

@@ -8,10 +8,7 @@
  * @copyright Miroslav Bauer @ CESNET 2016
  */
 
-
 /*global OC, $ */
-
-
 
 $(document).ready(function() {
 	$('#user_shib_personal').after($('#passwordform'));
@@ -27,8 +24,6 @@ $(document).ready(function() {
 				user : $('#client_username').text()
 			},
 			function(result) {
-				var sendErrorMsg;
-
 				if (result && result.status === 'success'){
 					$('#reset_client_password').val(t(
 						'user_shib','Reset link sent'));
@@ -38,9 +33,8 @@ $(document).ready(function() {
 					$('#reset_client_password')
                                                 .addClass('warning')
 					if (result && result.msg){
-						sendErrorMsg = result.msg;
 						$('#reset_client_password')
-							.val(t(sendErrorMsg));
+							.val(t(result.msg));
 					}
 				}
 			}
