@@ -21,14 +21,17 @@ class SettingsController extends Controller {
 	private $config;
 	private $ocConfig;
 	private $userid;
+	private $timeFactory;
 	private $l10n;
 
 	public function __construct($appName, IRequest $request, $userid,
-				    IAppConfig $appConfig, $ocConfig, $l10n) {
+				    IAppConfig $appConfig, $ocConfig,
+				    $timeFactory, $l10n) {
 		parent::__construct($appName, $request);
 		$this->config = $appConfig;
 		$this->ocConfig = $ocConfig;
 		$this->userid = $userid;
+		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
 	}
 
@@ -39,14 +42,24 @@ class SettingsController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function personalIndex() {
+		$resetToken = $this->ocConfig->getUserValue(
+				$this->userid, 'owncloud', 'lostpassword', '');
+		$tokenDat = explode(':', $resetToken);
+		if (count($tokenDat) === 2) {
+			if ($tokenDat[0] < ($this->timeFactory->getTime() - 60*60*12)) {
+				$tokenValid = false;
+			} else {
+				$tokenValid = true;
+			}
+		} else {
+			$tokenValid = false;
+		}
 		return new TemplateResponse(
 			$this->appName,
 			'personal',
 			array(
 				'username' => $this->userid,
-				'link_sent' => $this->ocConfig->getUserValue(
-					$this->userid, 'owncloud',
-					'lostpassword', false)
+				'token_valid' => $tokenValid,
 			),
 			'blank'
 		);

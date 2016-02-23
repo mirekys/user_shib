@@ -37,6 +37,7 @@ class Application extends App {
 				$c->query('UserSession')->getUser()->getUID(),
 				$c->query('AppConfig'),
 				$c->query('OcConfig'),
+				$c->query('TimeFactory'),
 				$c->query('L10N')
 			);
 		});
