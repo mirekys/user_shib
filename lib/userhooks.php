@@ -39,7 +39,10 @@ class UserHooks {
 		$this->logCtx = array('app' => $this->appName);
 	}
 
-	
+	/**
+	 * Register hooks that depends on
+	 * User_Shib backend to be activated
+	 */
 	public function register() {
 		$this->userManager->listen(
 			'\OC\User', 'postLogin',
@@ -52,12 +55,6 @@ class UserHooks {
 				$this->onPostCreateUser($user, $password);
 			});
 		$this->userManager->listen(
-			'\OC\User', 'postSetPassword',
-			function($user, $password, $recoverPassword) {
-				$this->onPostSetPassword(
-					$user, $password, $recoverPassword);
-			});
-		$this->userManager->listen(
 			'\OC\User', 'postDelete',
 			function ($user) {
 				$this->onPostDelete($user);
@@ -65,6 +62,19 @@ class UserHooks {
 		$this->userManager->listen(
 			'\OC\User', 'logout',
 			function () { $this->onLogout(); });
+	}
+
+	/**
+	 * Register hooks that doesn't depend on
+	 * User_Shib backend to be activated
+	 */
+	public function registerPostSetPassword() {
+		$this->userManager->listen(
+			'\OC\User', 'postSetPassword',
+			function($user, $password, $recoverPassword) {
+				$this->onPostSetPassword(
+					$user, $password, $recoverPassword);
+			});
 	}
 
 	/**
@@ -111,8 +121,7 @@ class UserHooks {
 	 * @param string $recoverPassword
 	 */
 	private function onPostSetPassword($user, $password, $recoverPassword) {
-		$uid = $user->getUID();
-		$this->mailer->mailPasswordChange($uid);
+		$this->mailer->mailPasswordChange($user->getUID());
 	}
 
 	/**

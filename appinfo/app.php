@@ -53,6 +53,7 @@ if (!\OC::$CLI && !preg_match($nonShibRegex, $requestUri) ) {
 
 	// Register Hooks
 	$c->query('UserHooks')->register();
+	$c->query('UserHooks')->registerPostSetPassword();
 
 	// Prepare login URL with possible redirect URL
 	$urlGen = $c->query('URLGenerator');
@@ -87,4 +88,7 @@ if (!\OC::$CLI && !preg_match($nonShibRegex, $requestUri) ) {
 	);
 	\OCP\App::registerAdmin($c->query('AppName'), 'admin');
 	\OCP\App::registerPersonal($c->query('AppName'), 'personal');
+} elseif ($requestUri === '/index.php/settings/personal/changepassword') {
+	// Register only Non-Shib Hook for password setting
+	$c->query('UserHooks')->registerPostSetPassword();
 }

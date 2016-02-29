@@ -1,10 +1,10 @@
 <?php
-print_unescaped($l->t("Hey there,\n\njust letting you know that you now have an %s account.\n\nYour username: %s\nAccess it: %s\n\n", array($theme->getName(), $_['username'], $_['url'])));
+print_unescaped($l->t("Hello,\n\nwe would like to inform you that your ownCloud password for the client apps has been changed.\n\nIf you did not change your password, please contact us on du-support@cesnet.cz.\n\n", array()));
 
 // TRANSLATORS term at the end of a mail
-p($l->t("Cheers!"));
+p($l->t("Your CESNET Storage Department Team"));
 ?>
 
 	--
-<?php p($theme->getName() . ' - ' . $theme->getSlogan()); ?>
+<?php p($theme->getName()); ?>
 <?php print_unescaped("\n".$theme->getBaseUrl());
