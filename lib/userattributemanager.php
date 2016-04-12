@@ -44,17 +44,10 @@ class UserAttributeManager {
 		// Shibboleth/SAML uid is always required
 		$shibUid = $this->getShibUid();
 		if (! $shibUid ) { return false; }
-		// TODO: Move email to $backendConfig['required_attrs']
-		// TODO: Require email for all users (not only newly created)
-		// when all IdP's will provide it for us. Then move getOcUid
-		// call to the end of this method.
-		$ocUid = $this->getOcUid();
-		if (! $this->getEmail() && ! \OCP\User::userExists($ocUid)) {
-			return false;
-		}
+
 		// Check for additional required attributes
 		$missingAttrs = '';
-		foreach ($this->backendConfig['required_attrs'] as &$attr) {
+		foreach ($this->getRequiredAttributes() as $attr) {
 			if (! $this->getAttribute($attr)) {
 				$missingAttrs .= $attr . ' ';
 			}
@@ -65,7 +58,7 @@ class UserAttributeManager {
 				$shibUid, $missingAttrs), $this->logCtx);
 			return false;
 		}
-		return $ocUid;
+		return $this->getOcUid();
 	}
 
 	/**
@@ -132,17 +125,6 @@ class UserAttributeManager {
 	 */
 	public function getGroups() {
 		return $this->getAttribute('groups');
-	}
-
-	/**
-	 * Get the user affiliation from $_SERVER environment
-	 *
-	 * @deprecated This attribute is not needed and will be
-	 * removed in next versions
-	 * @return string|false if attribute not found
-	 */
-	public function getAffiliation() {
-		return $this->getAttribute('affiliation');
 	}
 
 	/**
@@ -274,5 +256,15 @@ class UserAttributeManager {
 					false
 		);
 		return $value;
+	}
+
+	/**
+	 * Get a list of required attribute names
+	 * that must be set prior to user's login.
+	 *
+	 * @return array(string) required attributes
+	 */
+	private function getRequiredAttributes() {
+		return $this->backendConfig['required_attrs'];
 	}
 }

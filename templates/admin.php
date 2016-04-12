@@ -33,6 +33,7 @@ script('user_shib', 'admin');
 				id="user_shib_userid"
 				value="<?php p($_['mapping_userid']); ?>">
 			</input>
+			<em><?php p($l->t( 'Required' )); ?></em>
 		</p>
 		<p>
 			<label for="user_shib_dn">
@@ -42,6 +43,14 @@ script('user_shib', 'admin');
 				id="user_shib_dn"
 				value="<?php p($_['mapping_dn']); ?>">
 			</input>
+			<input type="checkbox" name="user_shib_dn_required"
+				id="user_shib_dn_required" value="0"
+				<?php if (in_array('dn', $_['required_attrs'])) {
+					print_unescaped('checked="checked"'); } ?> >
+			</input>
+			<label for="user_shib_dn_required">
+				<em><?php p($l->t( 'Required' )); ?></em>
+			</label>
 		</p>
 		<p>
 			<label for="user_shib_firstname">
@@ -51,6 +60,14 @@ script('user_shib', 'admin');
 				id="user_shib_firstname"
 				value="<?php p($_['mapping_firstname']); ?>">
 			</input>
+			<input type="checkbox" name="user_shib_firstname_required"
+				id="user_shib_firstname_required" value="0"
+				<?php if (in_array('firstname', $_['required_attrs'])) {
+					print_unescaped('checked="checked"'); } ?> >
+			</input>
+			<label for="user_shib_firstname_required">
+				<em><?php p($l->t( 'Required' )); ?></em>
+			</label>
 		</p>
 		<p>
 			<label for="user_shib_surname">
@@ -60,6 +77,14 @@ script('user_shib', 'admin');
 				id="user_shib_surname"
 				value="<?php p($_['mapping_surname']); ?>">
 			</input>
+			<input type="checkbox" name="user_shib_surname_required"
+				id="user_shib_surname_required" value="0"
+				<?php if (in_array('surname', $_['required_attrs'])) {
+					print_unescaped('checked="checked"'); } ?> >
+			</input>
+			<label for="user_shib_surname_required">
+				<em><?php p($l->t( 'Required' )); ?></em>
+			</label>
 		</p>
 		<p>
 			<label for="user_shib_email">
@@ -69,6 +94,14 @@ script('user_shib', 'admin');
 				id="user_shib_email"
 				value="<?php p($_['mapping_email']); ?>">
 			</input>
+			<input type="checkbox" name="user_shib_email_required"
+				id="user_shib_email_required" value="0"
+				<?php if (in_array('email', $_['required_attrs'])) {
+					print_unescaped('checked="checked"'); } ?> >
+			</input>
+			<label for="user_shib_email_required">
+				<em><?php p($l->t( 'Required' )); ?></em>
+			</label>
 		</p>
 		<p>
 			<label for="user_shib_groups">
@@ -78,15 +111,14 @@ script('user_shib', 'admin');
 				id="user_shib_groups"
 				value="<?php p($_['mapping_groups']); ?>">
 			</input>
-		</p>
-		<p>
-			<label for="user_shib_affiliation">
-				<?php p($l->t( 'Affiliation' )); ?>
-			</label>
-			<input type="text" name="user_shib_affiliation"
-				id="user_shib_affiliation"
-				value="<?php p($_['mapping_affiliation']); ?>">
+			<input type="checkbox" name="user_shib_groups_required"
+				id="user_shib_groups_required" value="0"
+				<?php if (in_array('groups', $_['required_attrs'])) {
+					print_unescaped('checked="checked"'); } ?> >
 			</input>
+			<label for="user_shib_groups_required">
+				<em><?php p($l->t( 'Required' )); ?></em>
+			</label>
 		</p>
 		<input name="user_shib_mapping_submit"
 			id="user_shib_mapping_submit"

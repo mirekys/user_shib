@@ -108,6 +108,11 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 	 */
 	public function getDisplayNames($search = '',
 					$limit = null, $offset = null) {
+		/* If search is an existing ownCloud user uid,
+		 * return nothing and rely on Database backend
+		 * for providing the DisplayName */
+		if (\OCP\User::userExists($search)) { return array(); }
+
 		$displayNames = array();
 		$identities = $this->identityMapper->findIdentities(
 				$search, $limit, $offset);

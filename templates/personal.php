@@ -18,7 +18,7 @@ style('user_shib', 'style');
 	<span>
 		<?php p($l->t('Set password for your clients here')); ?>
 	</span>
-	<h2>Username</h2>
+	<h2><?php p($l->t('Username')); ?></h2>
 	<span id="client_username"><?php p($_['username']); ?></span>
 	<?php if (! $_['token_valid']) : ?>
 	<input id="reset_client_password" type="submit"

@@ -75,8 +75,8 @@ class Application extends App {
 			$autoupdate = $config->getValue($appName,'autoupdate');
 			$pgrp = $config->getValue(
 					$appName, 'protected_groups', array());
-			$rqattrs = $config->getValue(
-					$appName, 'required_attrs', array());
+			$rqattrs = explode(',', $config->getValue(
+					$appName, 'required_attrs', array()));
 			return array(
 				'active' => (bool) $active,
 				'autocreate' => (bool) $autocreate,

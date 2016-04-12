@@ -86,8 +86,6 @@ class SettingsController extends Controller {
 				$this->appName, 'mapping_email', '');
 		$groups = $this->config->getValue(
 				$this->appName, 'mapping_group', '');
-		$affiliation = $this->config->getValue(
-				$this->appName, 'mapping_affiliation', '');
 		// Load backend configuration
 		$active = $this->config->getValue(
 				$this->appName, 'active', 0);
@@ -97,9 +95,8 @@ class SettingsController extends Controller {
 				$this->appName, 'autoupdate', 0);
 		$protectedGroups = $this->config->getValue(
 				$this->appName, 'protected_groups', '');
-		// TODO: Implement this setting in settings template
-		$requiredAttrs = $this->config->getValue(
-				$this->appName, 'required_attrs', array());
+		$requiredAttrs = explode(',', $this->config->getValue(
+				$this->appName, 'required_attrs', ''));
 
 		return new TemplateResponse(
 			$this->appName,
@@ -112,7 +109,6 @@ class SettingsController extends Controller {
 				'mapping_surname' => $surname,
 				'mapping_email' => $email,
 				'mapping_groups' => $groups,
-				'mapping_affiliation' => $affiliation,
 				'mapping_active' => $active,
 				'mapping_autocreate' => $autocreate,
 				'mapping_autoupdate' => $autoupdate,
@@ -130,7 +126,7 @@ class SettingsController extends Controller {
 	 * Saves the SAML attribute mapping configuration.
 	 */
 	public function saveMappings($prefix, $userid, $dn, $firstname,
-				     $surname, $email, $groups, $affiliation) {
+				     $surname, $email, $groups, $required) {
 		$this->config->setValue(
 			$this->appName, 'mapping_prefix', $prefix);
 		$this->config->setValue(
@@ -146,7 +142,7 @@ class SettingsController extends Controller {
 		$this->config->setValue(
 			$this->appName, 'mapping_group', $groups);
 		$this->config->setValue(
-			$this->appName, 'mapping_affiliation', $affiliation);
+			$this->appName, 'required_attrs', $required);
 		return array(
 			'status' => 'success',
 			'data' => array(
@@ -159,7 +155,7 @@ class SettingsController extends Controller {
 	 * Saves the user backend configuration.
 	 */
 	public function saveBackendConfig($active, $autocreate, $autoupdate,
-					  $protectedGroups, $rqattrs) {
+					  $protectedGroups) {
 		$this->config->setValue(
 			$this->appName, 'active', $active);
 		$this->config->setValue(
@@ -168,8 +164,6 @@ class SettingsController extends Controller {
 			$this->appName, 'autoupdate', $autoupdate);
 		$this->config->setValue(
 			$this->appName, 'protected_groups', $protectedGroups);
-		$this->config->setValue(
-			$this->appName, 'required_attrs', $rqattrs);
 		return array(
 			'status' => 'success',
 			'data' => array(

@@ -18,6 +18,13 @@ $(document).ready(function() {
 		$('#user_shib_mapping_submit').attr('disabled', true);
 		OC.msg.startAction('#user_shib_mapping_msg',
 				t('user_shib', 'Saving...'));
+		var requiredAttrs = '';
+		requiredAttrs += $('#user_shib_dn_required').is(':checked') ? 'dn,' : '';
+		requiredAttrs += $('#user_shib_firstname_required').is(':checked') ? 'firstname,' : '';
+		requiredAttrs += $('#user_shib_surname_required').is(':checked') ? 'surname,' : '';
+		requiredAttrs += $('#user_shib_email_required').is(':checked') ? 'email,' : '';
+		requiredAttrs += $('#user_shib_groups_required').is(':checked') ? 'groups,' : '';
+		requiredAttrs = requiredAttrs.slice(0, -1);
 		$.post(
 			OC.generateUrl('/apps/user_shib/ajax/admin.php/mapping'),
 			{
@@ -28,7 +35,7 @@ $(document).ready(function() {
 				surname : $('#user_shib_surname').val(),
 				email : $('#user_shib_email').val(),
 				groups : $('#user_shib_groups').val(),
-				affiliation : $('#user_shib_affiliation').val()
+				required : requiredAttrs,
 			},
 			function(response) {
 				$('#user_shib_mapping_submit').attr(
