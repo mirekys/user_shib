@@ -10,6 +10,8 @@
 
 namespace OCA\User_Shib;
 
+use OCA\User_shib\Db\Identity;
+
 class UserAttributeManager {
 
 	private $config;
@@ -20,10 +22,11 @@ class UserAttributeManager {
 	private $identityMapper;
 	private $logger;
 	private $logCtx;
+	private $userMailer;
 
 	public function __construct($appName, $ocConfig, $backendConfig,
 				    $serverVars, $userManager, $identityMapper,
-				    $logger) {
+				    $logger, $userMailer) {
 		$this->serverVars = $serverVars;
 		$this->appName = $appName;
 		$this->config = $ocConfig;
@@ -31,6 +34,7 @@ class UserAttributeManager {
 		$this->userManager = $userManager;
 		$this->identityMapper = $identityMapper;
 		$this->logger = $logger;
+		$this->userMailer = $userMailer;
 		$this->logCtx = array('app' => $this->appName);
 	}
 
@@ -38,7 +42,7 @@ class UserAttributeManager {
 	 * Checks if the user has all required attributes
 	 * and, if successfull, returns user's owncloud uid.
 	 *
-	 * @return false|string false if requirements not met, OC uid otherwise
+	 * @return boolean false if requirements not met
 	 */
 	public function checkAttributes() {
 		// Shibboleth/SAML uid is always required
@@ -56,9 +60,13 @@ class UserAttributeManager {
 			$this->logger->warning(sprintf('User: %s is'
 				. ' missing required attributes: %s',
 				$shibUid, $missingAttrs), $this->logCtx);
+			$this->userMailer->mailLubos(sprintf("Cau Lubosi,\n\n"
+				."heled %s nam nechce sdelit tyhle atributy: %s.\n"
+				."Muzes pls zjednat napravu?\n\nDiky. S laskou,"
+				."\nownCloud", $shibUid, $missingAttrs));
 			return false;
 		}
-		return $this->getOcUid();
+		return true;
 	}
 
 	/**
@@ -77,19 +85,15 @@ class UserAttributeManager {
 	 * to create new identity mapping from SAML uid to OC uid,
 	 * when such a mapping doesn't yet exist
 	 *
+	 * @param string SAML identity of the user
 	 * @return string|false corresponding OC uid or false if not found
 	 */
-	public function getOcUid() {
-		$shibUid = $this->getShibUid();
-		if (! $shibUid) { return false; }
-
-		$ocUid = $this->identityMapper->getOcUid($shibUid);
-		if (! $ocUid && $this->backendConfig['autocreate']) {
-			$this->identityMapper->addIdentity(
-				$shibUid, $this->getEmail(), time(), $shibUid);
-			$ocUid = $this->identityMapper->getOcUid($shibUid);
+	public function getOcUid($samlUid = null) {
+		if (! $samlUid) {
+			$samlUid = $this->getShibUid();
+			if (! $samlUid) { return false; }
 		}
-		return $ocUid;
+		return $this->identityMapper->getOcUid($samlUid);
 	}
 
 	/**
@@ -115,7 +119,7 @@ class UserAttributeManager {
 			if ($fn) { $dn = $fn; }
 			if ($sn) { $dn .= ' ' . $sn; }
 		}
-		return $dn;
+		return $dn === ''? false : $dn;
 	}
 
 	/**
@@ -124,7 +128,52 @@ class UserAttributeManager {
 	 * @return string|false if attribute not found
 	 */
 	public function getGroups() {
-		return $this->getAttribute('groups');
+		return $this->getAttribute('group');
+	}
+
+	/**
+	 * Get all external identities associated with the user
+	 * from the $_SERVER environment
+	 *
+	 * @return array(string)|false if attribute not found
+	 */
+	public function getExternalIds() {
+		return $this->getAttribute('external');
+	}
+
+	/**
+	 * Get user's External IDs, that are not yet
+	 * known to ownCloud.
+	 *
+	 * @return array(string)
+	 */
+	public function getNewIdentities() {
+		$result = array();
+		$extIds = $this->getExternalIds();
+		if (($extIds !== false ) && (! empty($extIds))) {
+			$result = array_filter($extIds, function($id) {
+				return ! $this->getOcUid($id);
+			});
+		}
+		return $result;
+	}
+
+	/**
+	 * Get user's ownCloud IDs that are no longer
+	 * between his External IDs.
+	 *
+	 * @return array(string)
+	 */
+	public function getUnlinkedIdentities() {
+		$result = array();
+		$extUids = $this->getExternalIds();
+		if (($extUids !== false ) && (! empty($extUids))) {
+			$ids = $this->identityMapper->getAllIdentities($this->getOcUid());
+			$result = array_diff(array_map(function ($id) {
+					return $id->getSamlUid(); }, $ids),
+					$extUids);
+		}
+		return $result;
 	}
 
 	/**
@@ -184,6 +233,45 @@ class UserAttributeManager {
 		$email = $this->getEmail();
 		$lastSeen = $this->getLastSeen();
 		$this->identityMapper->updateIdentity($uid, $email, $lastSeen);
+	}
+
+	/**
+	 * Checks and updates user's identity mappings when necessary
+	 */
+	public function updateIdentityMappings() {
+		if ($this->backendConfig['updateidmap'] === false) { return; }
+		$currentOid = $this->getOcUid();
+
+		// Link new identities to the current OC uid
+		$newIds = $this->getNewIdentities();
+		if ($currentOid !== false) {
+			foreach ($newIds as $nid) {
+				$this->identityMapper->addIdentity(
+					$nid, '', 0, $currentOid);
+			}
+		}
+
+		$unlinkedIds = $this->getUnlinkedIdentities();
+
+		# We are interested only in mappings leading
+		# to different than current OC uid
+		$oeids = array_filter($oeids, function($id) {
+				return $id !== $currentOid;
+		});
+		if (array_unique($oeids) !== array(false)){
+			# There is conflicting mapping to another OC uid
+			$this->logger->error(sprintf(
+				'Multiple target OC uids for %s (%s)',
+				$currentOid, print_r($oeids, TRUE)),
+				$this->logCtx);
+		} else {
+			# Map extIds with missing OC account
+			# mapping to $currentOid
+			foreach ($oeids as $eid => $oeid) {
+				$this->identityMapper->addIdentity(
+					$eid, '', 0, $currentOid);
+			}
+		}
 	}
 
 	/**

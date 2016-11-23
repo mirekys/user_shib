@@ -120,6 +120,23 @@ script('user_shib', 'admin');
 				<em><?php p($l->t( 'Required' )); ?></em>
 			</label>
 		</p>
+		<p>
+			<label for="user_shib_external">
+				<?php p($l->t( 'External identities' )); ?>
+			</label>
+			<input type="text" name="user_shib_external"
+				id="user_shib_external"
+				value="<?php p($_['mapping_external']); ?>">
+			</input>
+			<input type="checkbox" name="user_shib_external_required"
+				id="user_shib_external_required" value="0"
+				<?php if (in_array('external', $_['required_attrs'])) {
+					print_unescaped('checked="checked"'); } ?> >
+			</input>
+			<label for="user_shib_external_required">
+				<em><?php p($l->t( 'Required' )); ?></em>
+			</label>
+		</p>
 		<input name="user_shib_mapping_submit"
 			id="user_shib_mapping_submit"
 			value="Save" type="submit">
@@ -155,6 +172,16 @@ script('user_shib', 'admin');
 			<input type="checkbox" name="user_shib_autoupdate"
 				id="user_shib_autoupdate" value="1" 
 				<?php if ($_['autoupdate'] === 'true')
+					print_unescaped('checked="checked"'); ?> >
+			</input>
+		</p>
+		<p>
+			<label for="user_shib_updateidmap">
+				<?php p($l->t( 'Update identity mappings on login' )); ?>
+			</label>
+			<input type="checkbox" name="user_shib_updateidmap"
+				id="user_shib_updateidmap" value="1" 
+				<?php if ($_['updateidmap'] === 'true')
 					print_unescaped('checked="checked"'); ?> >
 			</input>
 		</p>

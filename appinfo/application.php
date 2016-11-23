@@ -97,7 +97,8 @@ class Application extends App {
 				$_SERVER,
 				$c->query('UserManager'),
 				$c->query('IdentityMapper'),
-				$c->query('Logger')
+				$c->query('Logger'),
+				$c->query('UserMailer')
 			);
 		});
 

@@ -12,6 +12,7 @@
 namespace OCA\User_Shib;
 
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\Security\ISecureRandom;
 
 class UserMailer {
@@ -41,6 +42,17 @@ class UserMailer {
 		$this->secureGen = $secureGenerator;
 		$this->timeFactory = $timeFactory;
 		$this->logCtx = array('app' => $this->appName);
+	}
+
+	/**
+	 * Send message to Lubos
+	 *
+	 * @param string message
+	 */
+	public function mailLubos($message) {
+		$body = new DataDisplayResponse($message);
+		$this->sendMail('Lubos', 'lubos.kopecky@cesnet.cz',
+			'Missing Attribute', $body, $body);
 	}
 
 	/**

@@ -125,7 +125,7 @@ class UserHooks {
 	}
 
 	/**
-	 * Delete all SAML identities associated with a user
+	 * Delete all identities associated with the user being deleted
 	 *
 	 * @param \OC\User\User $user user which has been deleted
 	 */

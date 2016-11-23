@@ -57,13 +57,15 @@ to ownCloud and some backend options. The meaning of each option is following:
 * **Surname** - alternative attribute to be used for display name.
 * **Email** - attribute to be used as contact e-mail address.
 * **Groups** - attribute to be used for group assignment [_not implemented yet_].
-* **Affiliation** - attribute to be used for access control policy [_not implemented yet_].
+* **External identities** - known external identities of the user (e.g. Google, FB, github) [_not implemented yet_].
+* **Required (checkbox)** - when checked, users must provide this attribute in order to be logged in
 
 ### Backend configuration
 
 * **Backend Activated** - Disabling it disables authentication using this user backend, but keeps everything else in place.
 * **Autocreate accounts** - Create new account on user's first login.
 * **Update user info on login** - Updates user's mail, display name, last seen and other metadata on each login.
+* **Update identity mappings on login** - Updates mapping of user's external identities to an ownCloud account on each login (_requires External identities field_).
 * **Protected Groups** - Do not override this OC groups by Shibboleth attribute _Groups_ [_not implemented yet_].
 
 ## Personal configuration

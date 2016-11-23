@@ -86,6 +86,8 @@ class SettingsController extends Controller {
 				$this->appName, 'mapping_email', '');
 		$groups = $this->config->getValue(
 				$this->appName, 'mapping_group', '');
+		$external = $this->config->getValue(
+				$this->appName, 'mapping_external', '');
 		// Load backend configuration
 		$active = $this->config->getValue(
 				$this->appName, 'active', 0);
@@ -93,6 +95,8 @@ class SettingsController extends Controller {
 				$this->appName, 'autocreate', 0);
 		$autoupdate = $this->config->getValue(
 				$this->appName, 'autoupdate', 0);
+		$updateidmap = $this->config->getValue(
+				$this->appName, 'updateidmap', 0);
 		$protectedGroups = $this->config->getValue(
 				$this->appName, 'protected_groups', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
@@ -109,12 +113,11 @@ class SettingsController extends Controller {
 				'mapping_surname' => $surname,
 				'mapping_email' => $email,
 				'mapping_groups' => $groups,
-				'mapping_active' => $active,
-				'mapping_autocreate' => $autocreate,
-				'mapping_autoupdate' => $autoupdate,
+				'mapping_external' => $external,
 				'active' => $active,
 				'autocreate' => $autocreate,
 				'autoupdate' => $autoupdate,
+				'updateidmap' => $updateidmap,
 				'protected_groups' => $protectedGroups,
 				'required_attrs' => $requiredAttrs
 			),
@@ -126,7 +129,8 @@ class SettingsController extends Controller {
 	 * Saves the SAML attribute mapping configuration.
 	 */
 	public function saveMappings($prefix, $userid, $dn, $firstname,
-				     $surname, $email, $groups, $required) {
+				     $surname, $email, $groups,
+				     $external, $required) {
 		$this->config->setValue(
 			$this->appName, 'mapping_prefix', $prefix);
 		$this->config->setValue(
@@ -142,6 +146,8 @@ class SettingsController extends Controller {
 		$this->config->setValue(
 			$this->appName, 'mapping_group', $groups);
 		$this->config->setValue(
+			$this->appName, 'mapping_external', $external);
+		$this->config->setValue(
 			$this->appName, 'required_attrs', $required);
 		return array(
 			'status' => 'success',
@@ -155,13 +161,15 @@ class SettingsController extends Controller {
 	 * Saves the user backend configuration.
 	 */
 	public function saveBackendConfig($active, $autocreate, $autoupdate,
-					  $protectedGroups) {
+					  $updateidmap, $protectedGroups) {
 		$this->config->setValue(
 			$this->appName, 'active', $active);
 		$this->config->setValue(
 			$this->appName, 'autocreate', $autocreate);
 		$this->config->setValue(
 			$this->appName, 'autoupdate', $autoupdate);
+		$this->config->setValue(
+			$this->appName, 'updateidmap', $updateidmap);
 		$this->config->setValue(
 			$this->appName, 'protected_groups', $protectedGroups);
 		return array(

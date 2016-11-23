@@ -54,13 +54,16 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 	 * @return string returns the user id or false
 	 */
 	public function checkPassword($uid, $password) {
-		if (!$this->backendConfig['active']) { return false; }
-
-		$uid = $this->userAttrManager->checkAttributes();
-
+		if (($this->backendConfig['active'] !== true)
+		   || ($this->userAttrManager->checkAttributes() !== true)) {
+			return false;
+		}
+		$uid = $this->userAttrManager->getOcUid();
 		// Reject login if uid is invalid or new
-		// user account needs to be created manually.
 		if (!$uid) { return false; }
+
+		// Reject login if user account needs to be created manually.
+		// Create new account if needed otherwise.
 		if (! $this->userManager->userExists($uid)) {
 			if (! $this->backendConfig['autocreate']) {
 				return false;

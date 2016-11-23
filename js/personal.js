@@ -40,6 +40,7 @@ $(document).ready(function() {
 			}
 		);
 	});
+	$('#email').prop('disabled', true);
 });
 
 ;
