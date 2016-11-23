@@ -69,10 +69,10 @@ class IdentityMapper extends Mapper {
 	}
 
 	/**
-	 * Returns all SAML identities associated with the OC user
+	 * Returns all identities associated with the OC user
 	 * 
 	 * @param string $ocUid OC user uid
-	 * @return array(\OCA\User_Shib\Db\Identity) associated SAML idenitites
+	 * @return array(\OCA\User_Shib\Db\Identity) associated idenitites
 	 */
 	public function getAllIdentities($ocUid) {
 		$result = array();
@@ -94,13 +94,12 @@ class IdentityMapper extends Mapper {
 	 * @return \OCA\User_Shib\Db\Identity|null identity DB entity
 	 * or null if not found
 	 */
-	private function getIdentity($samlUid) {
+	public function getIdentity($samlUid) {
 		$identity = null;
-		$sql = sprintf('SELECT * FROM `%s` WHERE `saml_uid`=?',
-			$this->getTableName());
-
 		if (! $samlUid || $samlUid === '') { return null; }
 
+		$sql = sprintf('SELECT * FROM `%s` WHERE `saml_uid` = ?',
+			$this->getTableName());
 		try {
 			$identity = $this->findEntity($sql, [$samlUid]);
 		} catch (DoesNotExistException $e) {
