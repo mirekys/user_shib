@@ -1,3 +1,8 @@
+#user_shib_mapping > p > select {
+	width: auto;
+	max-width: 40%;
+}
+
 #user_shib_personal {
 	margin-bottom: 0px;
 	padding-bottom: 0px;

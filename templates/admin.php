@@ -10,6 +10,7 @@
  */
 
 script('user_shib', 'admin');
+style('user_shib', 'style');
 ?>
 
 <div class="section" id="user_shib">
@@ -29,20 +30,32 @@ script('user_shib', 'admin');
 			<label for="user_shib_userid">
 				<?php p($l->t( 'Username' )); ?>
 			</label>
-			<input type="text" name="user_shib_userid"
-				id="user_shib_userid"
-				value="<?php p($_['mapping_userid']); ?>">
-			</input>
+			<select name='user_shib_userid' id='user_shib_userid'>
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_userid']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
 			<em><?php p($l->t( 'Required' )); ?></em>
 		</p>
 		<p>
 			<label for="user_shib_dn">
 				<?php p($l->t( 'Full name' )); ?>
 			</label>
-			<input type="text" name="user_shib_dn"
-				id="user_shib_dn"
-				value="<?php p($_['mapping_dn']); ?>">
-			</input>
+			<select name="user_shib_dn" id="user_shib_dn">
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_dn']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
 			<input type="checkbox" name="user_shib_dn_required"
 				id="user_shib_dn_required" value="0"
 				<?php if (in_array('dn', $_['required_attrs'])) {
@@ -56,10 +69,16 @@ script('user_shib', 'admin');
 			<label for="user_shib_firstname">
 				<?php p($l->t( 'First name' )); ?>
 			</label>
-			<input type="text" name="user_shib_firstname"
-				id="user_shib_firstname"
-				value="<?php p($_['mapping_firstname']); ?>">
-			</input>
+			<select name="user_shib_firstname" id="user_shib_firstname">
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_firstname']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
 			<input type="checkbox" name="user_shib_firstname_required"
 				id="user_shib_firstname_required" value="0"
 				<?php if (in_array('firstname', $_['required_attrs'])) {
@@ -73,10 +92,16 @@ script('user_shib', 'admin');
 			<label for="user_shib_surname">
 				<?php p($l->t( 'Surname' )); ?>
 			</label>
-			<input type="text" name="user_shib_surname"
-				id="user_shib_surname"
-				value="<?php p($_['mapping_surname']); ?>">
-			</input>
+			<select name="user_shib_surname" id="user_shib_surname">
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_surname']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
 			<input type="checkbox" name="user_shib_surname_required"
 				id="user_shib_surname_required" value="0"
 				<?php if (in_array('surname', $_['required_attrs'])) {
@@ -90,10 +115,16 @@ script('user_shib', 'admin');
 			<label for="user_shib_email">
 				<?php p($l->t( 'E-mail' )); ?>
 			</label>
-			<input type="text" name="user_shib_email"
-				id="user_shib_email"
-				value="<?php p($_['mapping_email']); ?>">
-			</input>
+			<select name="user_shib_email" id="user_shib_email">
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+                                        <option value="<?php p($svar); ?>"
+                                        <?php if ($svar === $_['mapping_email']): ?>
+                                                selected='selected'
+                                        <?php endif; ?>>
+                                                <?php p($svar.' ('.$svalue.')'); ?>
+                                        </option>
+                                <?php endforeach;?>
+			</select>
 			<input type="checkbox" name="user_shib_email_required"
 				id="user_shib_email_required" value="0"
 				<?php if (in_array('email', $_['required_attrs'])) {
@@ -107,10 +138,16 @@ script('user_shib', 'admin');
 			<label for="user_shib_groups">
 				<?php p($l->t( 'Groups' )); ?>
 			</label>
-			<input type="text" name="user_shib_groups"
-				id="user_shib_groups"
-				value="<?php p($_['mapping_groups']); ?>">
-			</input>
+			<select name="user_shib_groups" id="user_shib_groups">
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_groups']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
 			<input type="checkbox" name="user_shib_groups_required"
 				id="user_shib_groups_required" value="0"
 				<?php if (in_array('groups', $_['required_attrs'])) {
@@ -124,10 +161,16 @@ script('user_shib', 'admin');
 			<label for="user_shib_external">
 				<?php p($l->t( 'External identities' )); ?>
 			</label>
-			<input type="text" name="user_shib_external"
-				id="user_shib_external"
-				value="<?php p($_['mapping_external']); ?>">
-			</input>
+			<select name="user_shib_external" id="user_shib_external">
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_external']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
 			<input type="checkbox" name="user_shib_external_required"
 				id="user_shib_external_required" value="0"
 				<?php if (in_array('external', $_['required_attrs'])) {

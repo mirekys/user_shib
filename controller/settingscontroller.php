@@ -20,16 +20,18 @@ class SettingsController extends Controller {
 
 	private $config;
 	private $ocConfig;
+	private $serverVars;
 	private $userid;
 	private $timeFactory;
 	private $l10n;
 
 	public function __construct($appName, IRequest $request, $userid,
-				    IAppConfig $appConfig, $ocConfig,
+				    IAppConfig $appConfig, $ocConfig, $serverVars,
 				    $timeFactory, $l10n) {
 		parent::__construct($appName, $request);
 		$this->config = $appConfig;
 		$this->ocConfig = $ocConfig;
+		$this->serverVars = $serverVars;
 		$this->userid = $userid;
 		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
@@ -101,6 +103,10 @@ class SettingsController extends Controller {
 				$this->appName, 'protected_groups', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
 				$this->appName, 'required_attrs', ''));
+		$shibVars = array_filter($this->serverVars, function($var) use($prefix) {
+			return strpos($var, $prefix) === 0;
+		},ARRAY_FILTER_USE_KEY);
+		ksort($shibVars);
 
 		return new TemplateResponse(
 			$this->appName,
@@ -114,6 +120,7 @@ class SettingsController extends Controller {
 				'mapping_email' => $email,
 				'mapping_groups' => $groups,
 				'mapping_external' => $external,
+				'server_vars' => $shibVars,
 				'active' => $active,
 				'autocreate' => $autocreate,
 				'autoupdate' => $autoupdate,
