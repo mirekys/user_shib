@@ -329,7 +329,7 @@ class UserAttributeManager {
 
 	 /**
 	 * Returns a configured attribute mapping name
-	 * and prepends a mapping_prefix to it.
+	 * and prepends a mapping_prefix to it, when necessary.
 	 *
 	 * @param string $key mapping key
 	 * @see \OCA\User_Shib\Controllers\SettingsController
@@ -338,12 +338,12 @@ class UserAttributeManager {
 	private function getAttrMapping($key) {
 		$prefix = $this->config->getAppValue(
 				$this->appName, 'mapping_prefix', '');
-		$value = $prefix . $this->config->getAppValue(
+		$value = $this->config->getAppValue(
 					$this->appName,
 					'mapping_' . $key,
 					false
 		);
-		return $value;
+		return strpos($value, $prefix) === 0? $value : $prefix . $value;
 	}
 
 	/**
