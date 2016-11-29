@@ -45,9 +45,10 @@ class UserAttributeManager {
 	 * @return boolean false if requirements not met
 	 */
 	public function checkAttributes() {
-		// Shibboleth/SAML uid is always required
+		// Shibboleth/SAML SID & uid are always required
+		$sid = $this->getSessionId();
 		$shibUid = $this->getShibUid();
-		if (! $shibUid ) { return false; }
+		if (! $shibUid || !$sid ) { return false; }
 
 		// Check for additional required attributes
 		$missingAttrs = '';
@@ -67,6 +68,15 @@ class UserAttributeManager {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Get the Shibboleth Session ID from $_SERVER environment
+	 *
+	 * @return string|false if session id not found
+	 */
+	public function getSessionId() {
+		return $this->getAttributeFirst('sessid');
 	}
 
 	/**

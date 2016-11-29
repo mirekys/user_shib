@@ -79,8 +79,10 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 					));
 			}
 		}
-		$this->logger->debug(sprintf('Logging in user: %s (%s)',
-			$uid, $this->userAttrManager->getDisplayName()),
+		$this->logger->info(sprintf('Logging in user: %s (%s) '
+			.'with session: %s',
+			$uid, $this->userAttrManager->getDisplayName(),
+			$this->userAttrManager->getSessionId()),
 			$this->logCtx);
 		return $uid;
 	}

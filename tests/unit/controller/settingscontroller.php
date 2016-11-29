@@ -30,10 +30,20 @@ class SettingsControllerTest extends PHPUnit_Framework_TestCase {
 		$l10n = $this->getMockBuilder('OCP\IL10N')->getMock();
 		$this->ocConfig = \OC::$server->getConfig();
 		$this->timeFactory = new TimeFactory();
+		$this->serverVars = array(
+			'du_Shib-Session-ID' => 'abcd',
+			'du_eppn' => $this->userid,
+			'du_cn' => 'John Doe',
+			'du_givenName' => 'John',
+			'du_surname' => 'Doe',
+			'du_mail' => 'johndoe@gmail.com',
+			'du_perunPrincipalName' => 'john@doe.com;doe@john.com',
+			'du_perunVoName' => 'VO_group1;VO_group2:subgroup',
+		);
 		$this->setResetToken('');
 		$this->controller = new SettingsController(
 			'user_shib', $request, $this->userid, $appConfig,
-			$this->ocConfig, $this->timeFactory, $l10n);
+			$this->ocConfig, $this->serverVars, $this->timeFactory, $l10n);
 	}
 
 	/**

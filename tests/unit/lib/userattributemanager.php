@@ -32,13 +32,14 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 		# Update keys to ones set by your Shibboleth instance
 		$this->userid = 'john@doe.com';
 		$this->serverVars = array(
+			'du_Shib-Session-ID' => 'abcd',
 			'du_eppn' => $this->userid,
 			'du_cn' => 'John Doe',
 			'du_givenName' => 'John',
 			'du_surname' => 'Doe',
 			'du_mail' => 'johndoe@gmail.com',
 			'du_perunPrincipalName' => 'john@doe.com;doe@john.com',
-			'du_perunUniqueGroupName' => 'VO_group1;VO_group2:subgroup',	
+			'du_perunVoName' => 'VO_group1;VO_group2:subgroup',	
 		);
 		$this->backendConfig = array('active' => true, 'autocreate' => true,
 			'autoupdate' => true, 'protected_groups' => array(),
@@ -83,10 +84,22 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 		unset($this->serverVars['du_eppn']);
 		$this->assertFalse($this->getAttrMgr()->checkAttributes());
 		$this->serverVars = $origVars;
+		// When there is no session id
+		unset($this->serverVars['du_Shib-Session-ID']);
+		$this->assertFalse($this->getAttrMgr()->checkAttributes());
+		$this->serverVars = $origVars;
 		// When required attributes are missing
 		unset($this->serverVars['du_mail']);
                 $this->assertFalse($this->getAttrMgr()->checkAttributes());
 		$this->serverVars = $origVars;
+	}
+
+	public function testGetSessionId() {
+		$this->assertEquals(
+			$this->serverVars['du_Shib-Session-ID'],
+			$this->getAttrMgr()->getSessionId());
+		unset($this->serverVars['du_Shib-Session-ID']);
+		$this->assertFalse($this->getAttrMgr()->getSessionId());
 	}
 
 	public function testGetShibUid() {
@@ -140,9 +153,9 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 
 	public function testGetGroups() {
 		$this->assertEquals(
-			explode(';', $this->serverVars['du_perunUniqueGroupName']),
+			explode(';', $this->serverVars['du_perunVoName']),
 			$this->getAttrMgr()->getGroups());
-		unset($this->serverVars['du_perunUniqueGroupName']);
+		unset($this->serverVars['du_perunVoName']);
 		$this->assertFalse($this->getAttrMgr()->getGroups());
 	}
 
@@ -216,8 +229,8 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testCreateMappingCaseSensitivity() {
-		$this->addOcUid('John@Doe.Com', 'John@Doe.Com');
-		$this->assertFalse($this->getAttrMgr()->getOcUid('John@Doe.Com'));
+		$this->addOcUid('John@Doe.Com', 'John@Doe.com');
+		$this->assertFalse($this->getAttrMgr()->getOcUid('John@Doe.com'));
 	}
 
 	public function testUpdateIdentityMappings() {
@@ -229,6 +242,6 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 		$this->rmOcUid('doe@john.com');
 		$this->rmOcUid('unlinked@doe.com');
 		parent::tearDown();
-		\OC_User::deleteUser($this->userid);
+		\OC::$server->getUserManager()->get($this->userid)->delete();
 	}
 }

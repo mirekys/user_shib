@@ -30,6 +30,7 @@ $(document).ready(function() {
 			OC.generateUrl('/apps/user_shib/ajax/admin.php/mapping'),
 			{
 				prefix : $('#user_shib_prefix').val(),
+				sessid : $('#user_shib_sessid').val(),
 				userid : $('#user_shib_userid').val(),
 				dn : $('#user_shib_dn').val(),
 				firstname : $('#user_shib_firstname').val(),

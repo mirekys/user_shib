@@ -147,10 +147,10 @@ class UserHooks {
 	private function onLogout() {
 		$suid = $this->userAttrManager->getShibUid();
 		if ($suid) {
-			$this->logger->info(
-				'Initiating Shibboleth logout for: ' . $suid,
-				$this->logCtx
-			);
+			$this->logger->info(sprintf(
+				'Doing Shibboleth logout for: %s with session %s',
+				$suid, $this->userAttrManager->getSessionId()),
+				$this->logCtx);
 			$shibLogout = $this->urlGenerator->linkTo('',
 				'Shibboleth.sso/Logout',
 				array(

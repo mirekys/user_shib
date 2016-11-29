@@ -27,6 +27,22 @@ style('user_shib', 'style');
 			</input>
 		</p>
 		<p>
+			<label for="user_shib_sessid">
+				<?php p($l->t( 'Shibboleth Session ID' )); ?>
+			</label>
+			<select name='user_shib_sessid' id='user_shib_sessid'>
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_sessid']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
+			<em><?php p($l->t( 'Required' )); ?></em>
+		</p>
+		<p>
 			<label for="user_shib_userid">
 				<?php p($l->t( 'Username' )); ?>
 			</label>

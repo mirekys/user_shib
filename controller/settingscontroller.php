@@ -76,6 +76,8 @@ class SettingsController extends Controller {
 		// Load mapping configuration
 		$prefix = $this->config->getValue(
 				$this->appName, 'mapping_prefix', '');
+		$sid = $this->config->getValue(
+				$this->appName, 'mapping_sessid', '');
 		$uid = $this->config->getValue(
 				$this->appName, 'mapping_userid', '');
 		$dn = $this->config->getValue(
@@ -103,9 +105,14 @@ class SettingsController extends Controller {
 				$this->appName, 'protected_groups', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
 				$this->appName, 'required_attrs', ''));
-		$shibVars = array_filter($this->serverVars, function($var) use($prefix) {
-			return strpos($var, $prefix) === 0;
-		},ARRAY_FILTER_USE_KEY);
+		if ($prefix === '') {
+			$shibVars = $this->serverVars;
+		} else {
+			$shibVars = array_filter($this->serverVars,
+				function($var) use($prefix) {
+					return strpos($var, $prefix) === 0;
+				},ARRAY_FILTER_USE_KEY);
+		}
 		ksort($shibVars);
 
 		return new TemplateResponse(
@@ -113,6 +120,7 @@ class SettingsController extends Controller {
 			'admin',
 			array(
 				'mapping_prefix' => $prefix,
+				'mapping_sessid' => $sid,
 				'mapping_userid' => $uid,
 				'mapping_dn' => $dn,
 				'mapping_firstname' => $firstname,
@@ -135,11 +143,13 @@ class SettingsController extends Controller {
 	/**
 	 * Saves the SAML attribute mapping configuration.
 	 */
-	public function saveMappings($prefix, $userid, $dn, $firstname,
+	public function saveMappings($prefix, $sessid, $userid, $dn, $firstname,
 				     $surname, $email, $groups,
 				     $external, $required) {
 		$this->config->setValue(
 			$this->appName, 'mapping_prefix', $prefix);
+		$this->config->setValue(
+			$this->appName, 'mapping_sessid', $sessid);
 		$this->config->setValue(
 			$this->appName, 'mapping_userid', $userid);
 		$this->config->setValue(
