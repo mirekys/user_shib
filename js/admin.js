@@ -13,6 +13,20 @@
 
 $(document).ready(function() {
 	
+	OC.Settings.setupGroupsSelect($('#user_shib_protected_groups'));
+
+	if (!$('#user_shib_updategroups').is(':checked')) {
+		$('#user_shib_group_settings').hide();
+	}
+
+	$('#user_shib_updategroups').click(function(event) {
+		if ($('#user_shib_updategroups').is(':checked')) {
+			$('#user_shib_group_settings').show();
+	        } else {
+			$('#user_shib_group_settings').hide();
+		}
+        });
+
 	$('#user_shib_mapping_submit').click(function(event) {
 		event.preventDefault();	
 		$('#user_shib_mapping_submit').attr('disabled', true);
@@ -61,8 +75,11 @@ $(document).ready(function() {
 			{
 				active : $('#user_shib_active').is(':checked'),
 				autocreate: $('#user_shib_autocreate').is(':checked'),
+				autocreateGroups: $('#user_shib_autocreate_groups').is(':checked'),
+				autoremoveGroups: $('#user_shib_autoremove_groups').is(':checked'),
 				autoupdate: $('#user_shib_autoupdate').is(':checked'),
-				protectedGroups: $('#user_shib_protected_groups option:selected').val()
+				updateGroups: $('#user_shib_updategroups').is(':checked'),
+				protectedGroups: $('#user_shib_protected_groups').val()
 			},
 			function(response) {
 				$('#user_shib_backend_submit').attr(

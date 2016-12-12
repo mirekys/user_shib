@@ -3,11 +3,31 @@
 	max-width: 40%;
 }
 
+#user_shib_protected_groups_label {
+	margin-left: 24px;
+	margin-right: 5px;
+}
+
+#user_shib_mapping > p > label {
+	text-align: left;
+	width: 150px;
+}
+
+#user_shib_protected_groups {
+	width: auto;
+	min-width: 100px;
+	max-width: 40%;
+}
+
 #user_shib_personal {
 	margin-bottom: 0px;
 	padding-bottom: 0px;
 	padding-left: 0px;
 	padding-top: 0px;
+}
+
+.indent {
+	padding-left: 28px;
 }
 
 #passwordform {

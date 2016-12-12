@@ -73,15 +73,21 @@ class Application extends App {
 			$config = $c->query('AppConfig');
 			$active = $config->getValue($appName, 'active');
 			$autocreate = $config->getValue($appName,'autocreate');
+			$autocreateGroups = $config->getValue($appName, 'autocreate_groups');
+			$autoremoveGroups = $config->getValue($appName, 'autoremove_groups');
 			$autoupdate = $config->getValue($appName,'autoupdate');
-			$pgrp = $config->getValue(
-					$appName, 'protected_groups', array());
+			$updateGroups = $config->getValue($appName, 'updategroups');
+			$pgrp = explode('|', $config->getValue(
+					$appName, 'protected_groups', array()));
 			$rqattrs = explode(',', $config->getValue(
 					$appName, 'required_attrs', array()));
 			return array(
 				'active' => (bool) $active,
 				'autocreate' => (bool) $autocreate,
+				'autocreate_groups' => (bool) $autocreateGroups,
+				'autoremove_groups' => (bool) $autoremoveGroups,
 				'autoupdate' => (bool) $autoupdate,
+				'updategroups' => (bool) $updateGroups,
 				'protected_groups' => $pgrp,
 				'required_attrs' => $rqattrs
 			);
@@ -97,6 +103,7 @@ class Application extends App {
 				$c->query('BackendConfig'),
 				$_SERVER,
 				$c->query('UserManager'),
+				$c->query('GroupManager'),
 				$c->query('IdentityMapper'),
 				$c->query('Logger'),
 				$c->query('UserMailer')
@@ -132,6 +139,10 @@ class Application extends App {
 		 */
 		$container->registerService('UserManager', function($c) {
 			return $c->query('ServerContainer')->getUserManager();
+		});
+
+		$container->registerService('GroupManager', function($c) {
+			return $c->query('ServerContainer')->getGroupManager();
 		});
 
 		$container->registerService('UserSession', function($c) {

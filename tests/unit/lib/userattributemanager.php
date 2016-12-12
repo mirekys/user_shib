@@ -14,6 +14,7 @@ namespace OCA\User_Shib;
 use PHPUnit_Framework_TestCase;
 
 use OCA\User_Shib\Db\IdentityMapper;
+use OCA\User_Shib\UserMailer;
 use OC\AppFramework\Utility\TimeFactory;
 use OCP\AppFramework\Http\TemplateResponse;
 
@@ -22,7 +23,10 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	private $userid;
 	private $userObj;
 	private $attrMgr;
+	private $grpMgr;
 	private $logger;
+	private $l10n;
+	private $mailer;
 	private $ocConfig;
 	private $backendConfig;
 	private $identityMapper;
@@ -39,14 +43,19 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 			'du_surname' => 'Doe',
 			'du_mail' => 'johndoe@gmail.com',
 			'du_perunPrincipalName' => 'john@doe.com;doe@john.com',
-			'du_perunVoName' => 'VO_group1;VO_group2:subgroup',	
+			'du_perunVoName' => 'VO_group1;VO_group2:subgroup',
 		);
 		$this->backendConfig = array('active' => true, 'autocreate' => true,
-			'autoupdate' => true, 'protected_groups' => array(),
+			'updategroups' => true, 'autocreate_groups' => true,
+			'autoremove_groups' => true, 'autoupdate' => true,
+			'protected_groups' => array('admin', 'gallery-users'),
 			'required_attrs' => array('userid', 'email'));
 		$this->ocConfig = \OC::$server->getConfig();		
 		$this->userManager = \OC::$server->getUserManager();
+		$this->grpMgr = \OC::$server->getGroupManager();
 		$this->logger = $this->getMockBuilder('OCP\ILogger')->getMock();
+		$this->l10n = \OC::$server->getL10N('user_shib');
+		$this->mailer = \OC::$server->getMailer();
 
 		$db = \OC::$server->getDatabaseConnection();
 		$this->identityMapper = new IdentityMapper(
@@ -57,10 +66,12 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	private function getAttrMgr() {
-		$userMailer = $this->getMockBuilder('OCA\User_shib\UserMailer')->getMock();
+		$userMailer = new UserMailer('user_shib', $this->l10n, $this->ocConfig,
+				$this->mailer, new \OC_Defaults, $this->logger,
+				'test@localhost', null, null, null);
 		return new UserAttributeManager(
 			'user_shib', $this->ocConfig, $this->backendConfig,
-			$this->serverVars, $this->userManager,
+			$this->serverVars, $this->userManager, $this->grpMgr,
 			$this->identityMapper, $this->logger, $userMailer);
 	}
 
@@ -152,11 +163,21 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetGroups() {
+		$origGrps = $this->serverVars['du_perunVoName'];
+		# 1) Attribute missing
+		unset($this->serverVars['du_perunVoName']);
+		$this->assertFalse($this->getAttrMgr()->getGroups());
+		# 2) Attribute empty
+		$this->serverVars['du_perunVoName'] = '';
+		$this->assertEquals(array(), $this->getAttrMgr()->getGroups());
+		# 3) Single group present
+		$this->serverVars['du_perunVoName'] = 'grp1';
+		$this->assertEquals(array('grp1'), $this->getAttrMgr()->getGroups());
+		# 4) Multiple groups present
+		$this->serverVars['du_perunVoName'] = $origGrps;
 		$this->assertEquals(
 			explode(';', $this->serverVars['du_perunVoName']),
 			$this->getAttrMgr()->getGroups());
-		unset($this->serverVars['du_perunVoName']);
-		$this->assertFalse($this->getAttrMgr()->getGroups());
 	}
 
 	public function testGetExternalIds() {
@@ -221,6 +242,84 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($dn, $this->userObj->getDisplayName());
 	}
 
+	public function testUpdateGroups() {
+		$usr = $this->userManager->get($this->userid);
+		$ocGrps = $this->grpMgr->getUserGroupIds($usr);
+		$oldGrps = $this->serverVars['du_perunVoName'];
+
+		# 0) Missing/empty groups attribute doesn't affect group membership
+		unset($this->serverVars['du_perunVoName']);
+		$this->getAttrMgr()->updateGroups();
+		$this->assertEquals($ocGrps, $this->grpMgr->getUserGroupIds($usr));
+		$this->serverVars['du_perunVoName'] = '';
+		$this->getAttrMgr()->updateGroups();
+		$this->assertEquals($ocGrps, $this->grpMgr->getUserGroupIds($usr));
+		$this->serverVars['du_perunVoName'] = $oldGrps;
+
+		# 1) Single group tests
+		$this->backendConfig['autocreate_groups'] = false;
+		$this->backendConfig['autoremove_groups'] = false;
+		# 1.1) single saml group that doesn't exist in OC - shouldn' do anything
+		$this->serverVars['du_perunVoName'] = 'newgrp';
+		$this->getAttrMgr()->updateGroups();
+		$this->assertEquals($ocGrps, $this->grpMgr->getUserGroupIds($usr));
+		# 1.2) single saml group that exists in OC - should add the user
+		$this->grpMgr->createGroup('newgrp');
+		$this->serverVars['du_perunVoName'] = 'newgrp';
+		$this->getAttrMgr()->updateGroups();
+		$this->assertEquals(array_merge($ocGrps, array('newgrp')), $this->grpMgr->getUserGroupIds($usr));
+		# 1.3) group that exists in OC but not in SAML - shouldn't remove the user
+		$this->serverVars['du_perunVoName'] = '';
+		$this->getAttrMgr()->updateGroups();
+		$this->assertEquals(array_merge($ocGrps, array('newgrp')), $this->grpMgr->getUserGroupIds($usr));
+		# 1.4) ad1.3) with autoremove on - should remove user from the group
+		$this->backendConfig['autoremove_groups'] = true;
+		$this->getAttrMgr()->updateGroups();
+		$this->assertEquals($ocGrps, $this->grpMgr->getUserGroupIds($usr));
+		# 1.5) ad1.2) with autocreate on - should create group and add user to it
+		$this->backendConfig['autocreate_groups'] = true;
+		$this->grpMgr->get('newgrp')->delete();
+		$this->serverVars['du_perunVoName'] = 'newgrp';
+		$this->getAttrMgr()->updateGroups();
+		$this->assertTrue($this->grpMgr->groupExists('newgrp'));
+		$this->assertEquals(array_merge($ocGrps, array('newgrp')), $this->grpMgr->getUserGroupIds($usr));
+		$this->grpMgr->get('newgrp')->delete();
+		# 1.6 try to get into a protected group - user should not be added
+		$this->backendConfig['autocreate_groups'] = false;
+		$this->backendConfig['autoremove_groups'] = false;
+		$this->serverVars['du_perunVoName'] = 'admin';
+		$this->getAttrMgr()->updateGroups();
+                $this->assertFalse(in_array('admin', $this->grpMgr->getUserGroupIds($usr)));
+		# 1.7 user should not be removed from a protected group
+                $this->backendConfig['autoremove_groups'] = true;
+		$this->grpMgr->get('admin')->addUser($usr);
+		$this->serverVars['du_perunVoName'] = '';
+		$this->getAttrMgr()->updateGroups();
+		$this->assertTrue(in_array('admin', $this->grpMgr->getUserGroupIds($usr)));
+		$this->grpMgr->get('admin')->removeUser($usr);
+
+		# 2) Test multiple groups assignment
+		$this->backendConfig['autocreate_groups'] = true;
+                $this->backendConfig['autoremove_groups'] = true;
+		# 2.1) Create & Assign to multiple groups 
+		$this->serverVars['du_perunVoName'] = $oldGrps;
+		$this->getAttrMgr()->updateGroups();
+		$grps = explode(';', $oldGrps);
+		foreach ($grps  as $grp) {
+			$this->assertTrue($this->grpMgr->groupExists($grp));
+		}
+		$this->assertEquals(array_merge($ocGrps, $grps), $this->grpMgr->getUserGroupIds($usr));
+		# 2.2) Remove from multiple groups
+		$this->serverVars['du_perunVoName'] = '';
+                $this->getAttrMgr()->updateGroups();
+		foreach ($grps  as $grp) {
+			$this->assertFalse(in_array($grp, $this->grpMgr->getUserGroupIds($usr)));
+		}
+		
+		# 3) When removing last group user, delete group
+
+	}
+
 	public function testUpdateIdentity() {
 		$this->identityMapper->updateIdentity($this->userid, 'new@email.com', 12345);
 		$identity = $this->identityMapper->getIdentity($this->userid);
@@ -234,13 +333,21 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testUpdateIdentityMappings() {
-		$this->getAttrMgr()->updateIdentityMappings();
+#		$this->getAttrMgr()->updateIdentityMappings();
 	}
 
 	public function tearDown() {
 		$this->rmOcUid();
 		$this->rmOcUid('doe@john.com');
 		$this->rmOcUid('unlinked@doe.com');
+		if (isset($this->serverVars['du_perunVoName'])) {
+			foreach (explode(';', $this->serverVars['du_perunVoName']) as $grp) {
+				$gr = $this->grpMgr->get($grp);
+				if ($gr) {
+					$gr->delete();
+				}
+			}
+		}
 		parent::tearDown();
 		\OC::$server->getUserManager()->get($this->userid)->delete();
 	}

@@ -91,6 +91,9 @@ class UserHooks {
 			$this->userAttrManager->updateDisplayName();
 			$this->userAttrManager->updateIdentity();
 		}
+		if ($this->backendConfig['updategroups']) {
+			$this->userAttrManager->updateGroups();
+		}
 	}
 
 	/**

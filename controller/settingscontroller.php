@@ -97,10 +97,16 @@ class SettingsController extends Controller {
 				$this->appName, 'active', 0);
 		$autocreate = $this->config->getValue(
 				$this->appName, 'autocreate', 0);
+		$autocreateGroups = $this->config->getValue(
+				$this->appName, 'autocreate_groups', 0);
+		$autoremoveGroups = $this->config->getValue(
+				$this->appName, 'autoremove_groups', 0);
 		$autoupdate = $this->config->getValue(
 				$this->appName, 'autoupdate', 0);
 		$updateidmap = $this->config->getValue(
 				$this->appName, 'updateidmap', 0);
+		$updateGroups = $this->config->getValue(
+				$this->appName, 'updategroups', 0);
 		$protectedGroups = $this->config->getValue(
 				$this->appName, 'protected_groups', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
@@ -131,8 +137,11 @@ class SettingsController extends Controller {
 				'server_vars' => $shibVars,
 				'active' => $active,
 				'autocreate' => $autocreate,
+				'autocreate_groups' => $autocreateGroups,
+				'autoremove_groups' => $autoremoveGroups,
 				'autoupdate' => $autoupdate,
 				'updateidmap' => $updateidmap,
+				'updategroups' => $updateGroups,
 				'protected_groups' => $protectedGroups,
 				'required_attrs' => $requiredAttrs
 			),
@@ -177,16 +186,23 @@ class SettingsController extends Controller {
 	/**
 	 * Saves the user backend configuration.
 	 */
-	public function saveBackendConfig($active, $autocreate, $autoupdate,
-					  $updateidmap, $protectedGroups) {
+	public function saveBackendConfig($active, $autocreate, $autocreateGroups,
+					  $autoremoveGroups, $autoupdate, $updateGroups,
+					  $protectedGroups) {
 		$this->config->setValue(
 			$this->appName, 'active', $active);
 		$this->config->setValue(
 			$this->appName, 'autocreate', $autocreate);
 		$this->config->setValue(
+			$this->appName, 'autocreate_groups', $autocreateGroups);
+		$this->config->setValue(
+			$this->appName, 'autoremove_groups', $autoremoveGroups);
+		$this->config->setValue(
 			$this->appName, 'autoupdate', $autoupdate);
 		$this->config->setValue(
-			$this->appName, 'updateidmap', $updateidmap);
+			$this->appName, 'updateidmap', false);
+		$this->config->setValue(
+			$this->appName, 'updategroups', $updateGroups);
 		$this->config->setValue(
 			$this->appName, 'protected_groups', $protectedGroups);
 		return array(

@@ -25,13 +25,14 @@ class UserAttributeManager {
 	private $userMailer;
 
 	public function __construct($appName, $ocConfig, $backendConfig,
-				    $serverVars, $userManager, $identityMapper,
-				    $logger, $userMailer) {
+				    $serverVars, $userManager, $groupManager,
+				    $identityMapper, $logger, $userMailer) {
 		$this->serverVars = $serverVars;
 		$this->appName = $appName;
 		$this->config = $ocConfig;
 		$this->backendConfig = $backendConfig;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->identityMapper = $identityMapper;
 		$this->logger = $logger;
 		$this->userMailer = $userMailer;
@@ -135,7 +136,7 @@ class UserAttributeManager {
 	/**
 	 * Get the user groups from $_SERVER environment
 	 *
-	 * @return string|false if attribute not found
+	 * @return array(string)|false if attribute not found
 	 */
 	public function getGroups() {
 		return $this->getAttribute('group');
@@ -246,6 +247,43 @@ class UserAttributeManager {
 	}
 
 	/**
+	 * Update group membership of the user
+	 */
+	public function updateGroups() {
+		$samlGroups = $this->getGroups();
+		if ($samlGroups === false) { return; }
+
+		$user = $this->getUser();
+		$ocGroups = $this->groupManager->getUserGroupIds($user);
+		$newGroups = array_diff($samlGroups, $ocGroups);
+		$missingGroups = array_diff($ocGroups, $samlGroups);
+		$skippedGroups = array();
+
+		foreach ($newGroups as $grp) {
+			if ($this->groupManager->groupExists($grp)) {
+				$this->addToGroup($user, $grp);
+			} elseif ($this->backendConfig['autocreate_groups'] === true) {
+				$this->groupManager->createGroup($grp);
+				$this->addToGroup($user, $grp);
+			} else {
+				$skippedGroups[] = $grp;
+			}
+		}
+		if ($this->backendConfig['autoremove_groups'] === true) {
+			foreach ($missingGroups as $grp) {
+				$this->removeFromGroup($user, $grp);
+			}
+		}
+		if (!empty($skippedGroups)) {
+			$this->logger->warning(sprintf('Couldn\'t assign the '
+				.'following non-existing groups to user: %s :(%s).'
+				.' Please create the groups manually.',
+				$this->getUser()->getUID(), implode(',', $skippedGroups)
+			));
+		}
+	}
+
+	/**
 	 * Checks and updates user's identity mappings when necessary
 	 */
 	public function updateIdentityMappings() {
@@ -315,7 +353,7 @@ class UserAttributeManager {
 	 *
 	 * @param string $name attribute name in the appConfig
 	 * @see \OCA\User_Shib\Controllers\SettingsController
-	 * @return string|array(string)|false attribute value or
+	 * @return array(string)|false attribute value or
 	 * false when attribute not found
 	 */
 	private function getAttribute($name) {
@@ -323,13 +361,15 @@ class UserAttributeManager {
 		if (($mappingName)
 		    && (array_key_exists($mappingName, $this->serverVars))) {
 			$val = $this->serverVars[$mappingName];
-			if (strpos($val, ';') !== FALSE) {
-				return explode(';', $val);
-			} else {
+			if (is_array($val)) {
 				return $val;
+			} elseif ($val === '') {
+				return array();
+			} else {
+				return explode(';', $val);
 			}
 		} else {
-			$this->logger->debug(sprintf(
+			$this->logger->warning(sprintf(
 				'Attribute %s [%s] not found',
 				$name, $mappingName),
 				$this->logCtx);
@@ -364,5 +404,31 @@ class UserAttributeManager {
 	 */
 	private function getRequiredAttributes() {
 		return $this->backendConfig['required_attrs'];
+	}
+
+	/**
+         * add a user to the group
+         *
+         * @param \OC\User\User $user
+	 * @param string group id
+         */
+	private function addToGroup($user, $gid) {
+		if (!in_array($gid, $this->backendConfig['protected_groups'])) {
+			$this->groupManager->get($gid)->addUser($user);
+			$this->logger->info(sprintf('Adding user: %s to group: %s',
+				$user->getUID(), $gid));
+		} else {
+			$this->logger->warning(sprintf(
+				'Refused to add user: %s to protected group: %s',
+				$user->getUID(), $gid));
+		}
+	}
+
+	private function removeFromGroup($user, $gid) {
+		if (!in_array($gid, $this->backendConfig['protected_groups'])) {
+			$this->logger->info(sprintf('Removing user: %s from group: %s',
+				$user->getUID(), $gid));
+			$this->groupManager->get($gid)->removeUser($user);
+		}
 	}
 }

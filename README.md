@@ -57,7 +57,7 @@ to ownCloud and some backend options. The meaning of each option is following:
 * **First Name** - alternative attribute to be used for display name.
 * **Surname** - alternative attribute to be used for display name.
 * **Email** - attribute to be used as contact e-mail address.
-* **Groups** - attribute to be used for group assignment [_not implemented yet_].
+* **Groups** - attribute to be used for group assignment.
 * **External identities** - known external identities of the user (e.g. Google, FB, github) [_not implemented yet_].
 * **Required (checkbox)** - when checked, users must provide this attribute in order to be logged in
 
@@ -65,9 +65,12 @@ to ownCloud and some backend options. The meaning of each option is following:
 
 * **Backend Activated** - Disabling it disables authentication using this user backend, but keeps everything else in place.
 * **Autocreate accounts** - Create new account on user's first login.
-* **Update user info on login** - Updates user's mail, display name, last seen and other metadata on each login.
+* **Autocreate groups** - Create new ownCloud groups based on user's _Groups_ attribute (except for _Protected Groups_).
+* **Autoremove groups** - Remove user from groups that are not listed in user's _Groups_ attribute (except for _Protected Groups_).
+* **Update user info on login** - Updates user's mail, display name, last seen, groups and other metadata on each login.
+* **Update group membership on login** - Whether or not to update user's group membership based on the _Groups_ attribute.
 * **Update identity mappings on login** - Updates mapping of user's external identities to an ownCloud account on each login (_requires External identities field_).
-* **Protected Groups** - Do not override this OC groups by Shibboleth attribute _Groups_ [_not implemented yet_].
+* **Protected Groups** - Do not override this OC groups membership by Shibboleth attribute _Groups_.
 
 ## Personal configuration
 

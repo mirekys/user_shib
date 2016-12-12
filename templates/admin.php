@@ -14,9 +14,10 @@ style('user_shib', 'style');
 ?>
 
 <div class="section" id="user_shib">
-	<h2><?php p($l->t('Shibboleth - User Backend')); ?></h2>
+	<h2 class="inlineblock"><?php p($l->t('Shibboleth - User Backend')); ?></h2>
+	<a target="_blank" class="icon-info svg" title="" href="https://github.com/mirekys/user_shib/blob/master/README.md" data-original-title="Open documentation"></a>
 	<form id="user_shib_mapping" class='mail_settings'>
-		<p><?php p($l->t('Attribute mapping configuration:')); ?></p>
+		<h3><?php p($l->t('Attribute mapping configuration:')); ?></h3>
 		<p>
 			<label for="user_shib_prefix">
 				<?php p($l->t( 'Attribute prefix' )); ?>
@@ -72,7 +73,7 @@ style('user_shib', 'style');
 					</option>
 				<?php endforeach;?>
 			</select>
-			<input type="checkbox" name="user_shib_dn_required"
+			<input type="checkbox" class="checkbox" name="user_shib_dn_required"
 				id="user_shib_dn_required" value="0"
 				<?php if (in_array('dn', $_['required_attrs'])) {
 					print_unescaped('checked="checked"'); } ?> >
@@ -95,7 +96,7 @@ style('user_shib', 'style');
 					</option>
 				<?php endforeach;?>
 			</select>
-			<input type="checkbox" name="user_shib_firstname_required"
+			<input type="checkbox" class="checkbox" name="user_shib_firstname_required"
 				id="user_shib_firstname_required" value="0"
 				<?php if (in_array('firstname', $_['required_attrs'])) {
 					print_unescaped('checked="checked"'); } ?> >
@@ -118,7 +119,7 @@ style('user_shib', 'style');
 					</option>
 				<?php endforeach;?>
 			</select>
-			<input type="checkbox" name="user_shib_surname_required"
+			<input type="checkbox" class="checkbox" name="user_shib_surname_required"
 				id="user_shib_surname_required" value="0"
 				<?php if (in_array('surname', $_['required_attrs'])) {
 					print_unescaped('checked="checked"'); } ?> >
@@ -141,7 +142,7 @@ style('user_shib', 'style');
                                         </option>
                                 <?php endforeach;?>
 			</select>
-			<input type="checkbox" name="user_shib_email_required"
+			<input type="checkbox" class="checkbox" name="user_shib_email_required"
 				id="user_shib_email_required" value="0"
 				<?php if (in_array('email', $_['required_attrs'])) {
 					print_unescaped('checked="checked"'); } ?> >
@@ -164,7 +165,7 @@ style('user_shib', 'style');
 					</option>
 				<?php endforeach;?>
 			</select>
-			<input type="checkbox" name="user_shib_groups_required"
+			<input type="checkbox" class="checkbox" name="user_shib_groups_required"
 				id="user_shib_groups_required" value="0"
 				<?php if (in_array('groups', $_['required_attrs'])) {
 					print_unescaped('checked="checked"'); } ?> >
@@ -187,7 +188,7 @@ style('user_shib', 'style');
 					</option>
 				<?php endforeach;?>
 			</select>
-			<input type="checkbox" name="user_shib_external_required"
+			<input type="checkbox" class="checkbox" name="user_shib_external_required"
 				id="user_shib_external_required" value="0"
 				<?php if (in_array('external', $_['required_attrs'])) {
 					print_unescaped('checked="checked"'); } ?> >
@@ -203,63 +204,90 @@ style('user_shib', 'style');
 		<span id="user_shib_mapping_msg" class="msg"></span>
 	</form>
 	<form id="user_shib_backend" class='mail_settings'>
-		<p><?php p($l->t('Backend configuration:')); ?></p>
+		<h3><?php p($l->t('Backend configuration:')); ?></h3>
 		<p>
-			<label for="user_shib_active">
-				<?php p($l->t( 'Backend activated' )); ?>
-			</label>
-			<input type="checkbox" name="user_shib_active"
+			<input type="checkbox" class="checkbox" name="user_shib_active"
 				id="user_shib_active" value="1" 
 				<?php if ($_['active'] === 'true')
 					print_unescaped('checked="checked"'); ?> >
 			</input>
+			<label for="user_shib_active">
+				<?php p($l->t( 'Backend activated' )); ?>
+			</label>
 		</p>
 		<p>
-			<label for="user_shib_autocreate">
-				<?php p($l->t( 'Autocreate accounts' )); ?>
-			</label>
-			<input type="checkbox" name="user_shib_autocreate"
+			<input type="checkbox" class="checkbox" name="user_shib_autocreate"
 				id="user_shib_autocreate" value="1" 
 				<?php if ($_['autocreate'] === 'true')
 					print_unescaped('checked="checked"'); ?> >
 			</input>
-		</p>
-		<p>
-			<label for="user_shib_autoupdate">
-				<?php p($l->t( 'Update user info on login' )); ?>
+			<label for="user_shib_autocreate">
+				<?php p($l->t( 'Autocreate accounts' )); ?>
 			</label>
-			<input type="checkbox" name="user_shib_autoupdate"
+		</p>
+
+		<p>
+			<input type="checkbox" class="checkbox" name="user_shib_autoupdate"
 				id="user_shib_autoupdate" value="1" 
 				<?php if ($_['autoupdate'] === 'true')
 					print_unescaped('checked="checked"'); ?> >
 			</input>
+			<label for="user_shib_autoupdate">
+				<?php p($l->t( 'Update user info on login' )); ?>
+			</label>
 		</p>
 		<p>
-			<label for="user_shib_updateidmap">
-				<?php p($l->t( 'Update identity mappings on login' )); ?>
-			</label>
-			<input type="checkbox" name="user_shib_updateidmap"
+			<input type="checkbox" class="checkbox" name="user_shib_updateidmap"
 				id="user_shib_updateidmap" value="1" 
 				<?php if ($_['updateidmap'] === 'true')
 					print_unescaped('checked="checked"'); ?> >
 			</input>
+			<label for="user_shib_updateidmap">
+				<?php p($l->t( 'Update identity mappings on login' )); ?>
+			</label>
 		</p>
 		<p>
-			<label for="user_shib_protected_groups">
-				<?php p($l->t( 'Protected Groups' )); ?>
+			<input type="checkbox" class="checkbox" name="user_shib_updategroups"
+				id="user_shib_updategroups" value="1"
+				<?php if ($_['updategroups'] === 'true')
+					print_unescaped('checked="checked"'); ?> >
+			</input>
+			<label for="user_shib_updategroups">
+				<?php p($l->t( 'Update group membership on login' )); ?>
 			</label>
-			<select id="user_shib_protected_groups"
-				name="user_shib_protected_groups"
-				multiple="multiple"
-				class="groupsselect multiselect button"
-				data-placehoder="Groups" title="no group">
-				<option value="admin">no group</option>
-			</select>
 		</p>
-		<input name="user_shib_backend_submit"
-			id="user_shib_backend_submit"
-			value="Save" type="submit">
+		<p class="indent" id="user_shib_group_settings">
+			<input type="checkbox" class="checkbox" name="user_shib_autocreate_groups"
+				id="user_shib_autocreate_groups" value="1"
+				<?php if ($_['autocreate_groups'] === 'true')
+					print_unescaped('checked="checked"'); ?> >
+			</input>
+			<label for="user_shib_autocreate_groups">
+				<?php p($l->t( 'Autocreate groups' ))?>
+			</label>
+		<br>
+			<input type="checkbox" class="checkbox" name="user_shib_autoremove_groups"
+				id="user_shib_autoremove_groups" value="1"
+				<?php if ($_['autoremove_groups'] === 'true')
+					print_unescaped('checked="checked"'); ?> >
+			</input>
+			<label for="user_shib_autoremove_groups">
+				<?php p($l->t( 'Autoremove groups' ))?>
+			</label>
+		<br>
+		<label id=user_shib_protected_groups_label for="user_shib_protected_groups">
+			<?php p($l->t( 'Protected Groups' )); ?></label>
+		<input type="hidden" id="user_shib_protected_groups" title="<?php p($l->t('All')); ?>"
+			value="<?php p($_['protected_groups']); ?>"
+			style="width: auto; min-width: 100px; max-width: 40%;">
 		</input>
+		</p>
+		<p>
+			<input name="user_shib_backend_submit"
+				id="user_shib_backend_submit"
+				value="Save" type="submit">
+			</input>
+		</p>
 		<span id="user_shib_backend_msg" class="msg"></span>
 	</form>
 </div>
