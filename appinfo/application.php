@@ -82,12 +82,12 @@ class Application extends App {
 			$rqattrs = explode(',', $config->getValue(
 					$appName, 'required_attrs', array()));
 			return array(
-				'active' => (bool) $active,
-				'autocreate' => (bool) $autocreate,
-				'autocreate_groups' => (bool) $autocreateGroups,
-				'autoremove_groups' => (bool) $autoremoveGroups,
-				'autoupdate' => (bool) $autoupdate,
-				'updategroups' => (bool) $updateGroups,
+				'active' => $active === 'true',
+				'autocreate' => $autocreate === 'true',
+				'autocreate_groups' => $autocreateGroups === 'true',
+				'autoremove_groups' => $autoremoveGroups === 'true',
+				'autoupdate' => $autoupdate === 'true',
+				'updategroups' => $updateGroups === 'true',
 				'protected_groups' => $pgrp,
 				'required_attrs' => $rqattrs
 			);

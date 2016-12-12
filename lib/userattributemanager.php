@@ -278,8 +278,8 @@ class UserAttributeManager {
 			$this->logger->warning(sprintf('Couldn\'t assign the '
 				.'following non-existing groups to user: %s :(%s).'
 				.' Please create the groups manually.',
-				$this->getUser()->getUID(), implode(',', $skippedGroups)
-			));
+				$this->getUser()->getUID(), implode(',', $skippedGroups)),
+				$this->logCtx);
 		}
 	}
 
@@ -416,18 +416,18 @@ class UserAttributeManager {
 		if (!in_array($gid, $this->backendConfig['protected_groups'])) {
 			$this->groupManager->get($gid)->addUser($user);
 			$this->logger->info(sprintf('Adding user: %s to group: %s',
-				$user->getUID(), $gid));
+				$user->getUID(), $gid), $this->logCtx);
 		} else {
 			$this->logger->warning(sprintf(
 				'Refused to add user: %s to protected group: %s',
-				$user->getUID(), $gid));
+				$user->getUID(), $gid), $this->logCtx);
 		}
 	}
 
 	private function removeFromGroup($user, $gid) {
 		if (!in_array($gid, $this->backendConfig['protected_groups'])) {
 			$this->logger->info(sprintf('Removing user: %s from group: %s',
-				$user->getUID(), $gid));
+				$user->getUID(), $gid), $this->logCtx);
 			$this->groupManager->get($gid)->removeUser($user);
 		}
 	}
