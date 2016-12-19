@@ -26,7 +26,7 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 
 	public function __construct($appName, $userManager, $userAttrManager,
 				    $identityMapper, $logger, $backendConfig,
-				    $secureGen) {
+				    $secureGen, $expirationManager) {
 		$this->logger = $logger;
 		$this->appName = $appName;
 		$this->backendConfig = $backendConfig;
@@ -34,6 +34,7 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 		$this->userAttrManager = $userAttrManager;
 		$this->identityMapper = $identityMapper;
 		$this->secureGen = $secureGen;
+		$this->expirationManager = $expirationManager;
 		$this->possibleActions = array(
 			self::CHECK_PASSWORD => 'checkPassword',
 		);
@@ -54,6 +55,7 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 	 * @return string returns the user id or false
 	 */
 	public function checkPassword($uid, $password) {
+
 		if (($this->backendConfig['active'] !== true)
 		   || ($this->userAttrManager->checkAttributes() !== true)) {
 			return false;
@@ -77,6 +79,12 @@ class UserShib extends \OC_User_Backend implements \OCP\IUserBackend {
 						. ISecureRandom::CHAR_LOWER
 						. ISecureRandom::CHAR_UPPER
 					));
+			}
+		} else {
+			$user = $this->userManager->get($uid);
+			# Re-enable user if account is expired
+			if ($user && !$user->isEnabled()) {
+				$this->expirationManager->unexpire($user);
 			}
 		}
 		$this->logger->info(sprintf('Logging in user: %s (%s) '

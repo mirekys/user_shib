@@ -65,12 +65,14 @@ to ownCloud and some backend options. The meaning of each option is following:
 
 * **Backend Activated** - Disabling it disables authentication using this user backend, but keeps everything else in place.
 * **Autocreate accounts** - Create new account on user's first login.
-* **Autocreate groups** - Create new ownCloud groups based on user's _Groups_ attribute (except for _Protected Groups_).
-* **Autoremove groups** - Remove user from groups that are not listed in user's _Groups_ attribute (except for _Protected Groups_).
 * **Update user info on login** - Updates user's mail, display name, last seen, groups and other metadata on each login.
 * **Update group membership on login** - Whether or not to update user's group membership based on the _Groups_ attribute.
-* **Update identity mappings on login** - Updates mapping of user's external identities to an ownCloud account on each login (_requires External identities field_).
+* **Autocreate groups** - Create new ownCloud groups based on user's _Groups_ attribute (except for _Protected Groups_).
+* **Autoremove groups** - Remove user from groups that are not listed in user's _Groups_ attribute (except for _Protected Groups_).
 * **Protected Groups** - Do not override this OC groups membership by Shibboleth attribute _Groups_.
+* **Update identity mappings on login** - Updates mapping of user's external identities to an ownCloud account on each login (_requires External identities field_).
+* **Expiration period** - Require users to log in using Shibboleth periodically, otherwise the user account expires and becomes disabled. Leave empty to disable expiration.
+
 
 ## Personal configuration
 

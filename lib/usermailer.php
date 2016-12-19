@@ -79,6 +79,50 @@ class UserMailer {
 	}
 
 	/**
+	 * Send a notice about user account being expired
+	 *
+	 * @param string $uid username
+	 */
+	public function mailExpirationNotice($uid) {
+		$recipient = $this->ocConfig->getUserValue(
+				$uid, 'settings', 'email');
+		$mailData = array(
+			'username' => $uid,
+			'url' => $this->urlGenerator->getAbsoluteURL('/'),
+		);
+		$subject = $this->l10n->t('Your %s account has expired',
+				[$this->defaults->getName()]);
+		$html = new TemplateResponse($this->appName,
+				'email.expiration', $mailData, 'blank');
+		$plain = new TemplateResponse($this->appName,
+				'email.expiration_plain_text',
+				$mailData, 'blank');
+		$this->sendMail($uid, $recipient, $subject, $html, $plain);
+	}
+
+	/**
+	 * Send a warning about user account expiration
+	 *
+	 * @param string $uid username
+	 */
+	public function mailExpirationWarning($uid) {
+		$recipient = $this->ocConfig->getUserValue(
+				$uid, 'settings', 'email');
+		$mailData = array(
+			'username' => $uid,
+			'url' => $this->urlGenerator->getAbsoluteURL('/'),
+		);
+		$subject = $this->l10n->t('Your %s account is about to be expired',
+				[$this->defaults->getName()]);
+		$html = new TemplateResponse($this->appName,
+				'email.expiration_warning', $mailData, 'blank');
+		$plain = new TemplateResponse($this->appName,
+				'email.expiration_warning_plain_text',
+				$mailData, 'blank');
+		$this->sendMail($uid, $recipient, $subject, $html, $plain);
+	}
+
+	/**
 	 * Send password-change mail
 	 *
 	 * @param string $uid username
@@ -86,7 +130,7 @@ class UserMailer {
 	 */
 	public function mailPasswordChange($uid) {
 		$recipient = $this->ocConfig->getUserValue(
-                                        $uid, 'settings', 'email');
+				$uid, 'settings', 'email');
 		$mailData = array(
 			'username' => $uid,
 			'url' => $this->urlGenerator->getAbsoluteURL('/')

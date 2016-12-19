@@ -79,7 +79,8 @@ $(document).ready(function() {
 				autoremoveGroups: $('#user_shib_autoremove_groups').is(':checked'),
 				autoupdate: $('#user_shib_autoupdate').is(':checked'),
 				updateGroups: $('#user_shib_updategroups').is(':checked'),
-				protectedGroups: $('#user_shib_protected_groups').val()
+				protectedGroups: $('#user_shib_protected_groups').val(),
+				expiration: $('#user_shib_expiration').val()
 			},
 			function(response) {
 				$('#user_shib_backend_submit').attr(

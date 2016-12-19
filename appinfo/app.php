@@ -17,6 +17,9 @@ use OCP\AppFramework\App;
 $app = new Application();
 $c = $app->getContainer();
 
+// Register BackgroundJobs
+\OCP\BackgroundJob::registerJob('\OCA\User_Shib\Cron\ExpireUsers');
+
 // It is not necessary to activate Shibboleth backend
 // for these URLs. The list comes from here:
 // https://doc.owncloud.com/server/8.2/admin_manual/enterprise_user_management/user_auth_shibboleth.html#apache-configuration

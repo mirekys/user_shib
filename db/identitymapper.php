@@ -130,6 +130,22 @@ class IdentityMapper extends Mapper {
 	}
 
 	/**
+	 * Find OC uids having all linked identities
+	 * last_seen beyond an expiration period
+	 *
+	 * @param int $expirationTreshold timestamp
+	 * @return array(string) expired OC uids
+	 */
+	public function findExpired($expirationTreshold) {
+		$sql = sprintf('SELECT `oc_uid` FROM `%s` GROUP BY `oc_uid`'
+			.' HAVING MAX(`last_seen`) <= ?',
+			$this->getTableName());
+		$result = $this->findEntities($sql, [$expirationTreshold]);
+		return array_unique(array_map(function ($id) {
+			return $id->getOcUid(); }, $result));
+	}
+
+	/**
 	 * Removes a SAML identity mapping to OC uid
 	 *
 	 * @param string $samlUid SAML identity to be removed

@@ -275,12 +275,22 @@ style('user_shib', 'style');
 				<?php p($l->t( 'Autoremove groups' ))?>
 			</label>
 		<br>
-		<label id=user_shib_protected_groups_label for="user_shib_protected_groups">
-			<?php p($l->t( 'Protected Groups' )); ?></label>
-		<input type="hidden" id="user_shib_protected_groups" title="<?php p($l->t('All')); ?>"
-			value="<?php p($_['protected_groups']); ?>"
-			style="width: auto; min-width: 100px; max-width: 40%;">
-		</input>
+			<label id=user_shib_protected_groups_label for="user_shib_protected_groups">
+				<?php p($l->t( 'Protected Groups' )); ?></label>
+			<input type="hidden" id="user_shib_protected_groups" title="<?php p($l->t('All')); ?>"
+				value="<?php p($_['protected_groups']); ?>"
+				style="width: auto; min-width: 100px; max-width: 40%;">
+			</input>
+		</p>
+		<p>
+			<label for="user_shib_expiration" id="user_shib_expiration_label">
+				<?php p($l->t( 'Expiration period' )); ?>
+			</label>
+			<input type="text" name="user_shib_expiration"
+				id="user_shib_expiration"
+				value="<?php p($_['expiration_period']); ?>">
+			</input>
+			<em><?php p($l->t( 'days' )); ?></em>
 		</p>
 		<p>
 			<input name="user_shib_backend_submit"

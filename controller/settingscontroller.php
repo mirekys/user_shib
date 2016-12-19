@@ -109,6 +109,8 @@ class SettingsController extends Controller {
 				$this->appName, 'updategroups', 0);
 		$protectedGroups = $this->config->getValue(
 				$this->appName, 'protected_groups', '');
+		$expirationPeriod = $this->config->getValue(
+				$this->appName, 'expiration_period', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
 				$this->appName, 'required_attrs', ''));
 		if ($prefix === '') {
@@ -143,6 +145,7 @@ class SettingsController extends Controller {
 				'updateidmap' => $updateidmap,
 				'updategroups' => $updateGroups,
 				'protected_groups' => $protectedGroups,
+				'expiration_period' => $expirationPeriod,
 				'required_attrs' => $requiredAttrs
 			),
 			'blank'
@@ -188,7 +191,7 @@ class SettingsController extends Controller {
 	 */
 	public function saveBackendConfig($active, $autocreate, $autocreateGroups,
 					  $autoremoveGroups, $autoupdate, $updateGroups,
-					  $protectedGroups) {
+					  $protectedGroups, $expiration) {
 		$this->config->setValue(
 			$this->appName, 'active', $active);
 		$this->config->setValue(
@@ -205,6 +208,8 @@ class SettingsController extends Controller {
 			$this->appName, 'updategroups', $updateGroups);
 		$this->config->setValue(
 			$this->appName, 'protected_groups', $protectedGroups);
+		$this->config->setValue(
+			$this->appName, 'expiration_period', preg_replace('/[^0-9]/', '', $expiration));
 		return array(
 			'status' => 'success',
 			'data' => array(

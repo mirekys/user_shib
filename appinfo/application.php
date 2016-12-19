@@ -17,6 +17,7 @@ use OCA\User_shib\UserShib;
 use OCA\User_shib\UserHooks;
 use OCA\User_shib\UserMailer;
 use OCA\User_shib\UserAttributeManager;
+use OCA\User_shib\ExpirationManager;
 use OCA\User_shib\Db\IdentityMapper;
 use OCA\User_shib\Controller\SessionController;
 use OCA\User_shib\Controller\SettingsController;
@@ -64,7 +65,8 @@ class Application extends App {
 				$c->query('IdentityMapper'),
 				$c->query('Logger'),
 				$c->query('BackendConfig'),
-				$c->query('SecureGenerator')
+				$c->query('SecureGenerator'),
+				$c->query('ExpirationManager')
 			);
 		});
 		
@@ -77,6 +79,7 @@ class Application extends App {
 			$autoremoveGroups = $config->getValue($appName, 'autoremove_groups');
 			$autoupdate = $config->getValue($appName,'autoupdate');
 			$updateGroups = $config->getValue($appName, 'updategroups');
+			$expPeriod = (int)$config->getValue($appName, 'expiration_period', 0);
 			$pgrp = explode('|', $config->getValue(
 					$appName, 'protected_groups', array()));
 			$rqattrs = explode(',', $config->getValue(
@@ -89,6 +92,7 @@ class Application extends App {
 				'autoupdate' => $autoupdate === 'true',
 				'updategroups' => $updateGroups === 'true',
 				'protected_groups' => $pgrp,
+				'expiration_period' => $expPeriod,
 				'required_attrs' => $rqattrs
 			);
 		});
@@ -131,6 +135,18 @@ class Application extends App {
 				$c->query('URLGenerator'),
 				$c->query('SecureGenerator'),
 				$c->query('TimeFactory')
+			);
+		});
+
+		$container->registerService('ExpirationManager', function($c) {
+			return new ExpirationManager(
+				$c->query('AppName'),
+				$c->query('BackendConfig'),
+				$c->query('IdentityMapper'),
+				$c->query('UserManager'),
+				$c->query('TimeFactory'),
+				$c->query('UserMailer'),
+				$c->query('Logger')
 			);
 		});
 

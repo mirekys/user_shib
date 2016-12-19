@@ -330,6 +330,7 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	public function testCreateMappingCaseSensitivity() {
 		$this->addOcUid('John@Doe.Com', 'John@Doe.com');
 		$this->assertFalse($this->getAttrMgr()->getOcUid('John@Doe.com'));
+		$this->rmOcUid('John@Doe.Com');
 	}
 
 	public function testUpdateIdentityMappings() {
