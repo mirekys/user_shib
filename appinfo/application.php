@@ -79,6 +79,7 @@ class Application extends App {
 			$autoremoveGroups = $config->getValue($appName, 'autoremove_groups');
 			$autoupdate = $config->getValue($appName,'autoupdate');
 			$updateGroups = $config->getValue($appName, 'updategroups');
+			$groupFilter = $config->getValue($appName, 'group_filter', '/.*/');
 			$expPeriod = (int)$config->getValue($appName, 'expiration_period', 0);
 			$pgrp = explode('|', $config->getValue(
 					$appName, 'protected_groups', array()));
@@ -92,6 +93,7 @@ class Application extends App {
 				'autoupdate' => $autoupdate === 'true',
 				'updategroups' => $updateGroups === 'true',
 				'protected_groups' => $pgrp,
+				'group_filter' => $groupFilter === ''? '/.*/' : $groupFilter,
 				'expiration_period' => $expPeriod,
 				'required_attrs' => $rqattrs
 			);

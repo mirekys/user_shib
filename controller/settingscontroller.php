@@ -109,6 +109,8 @@ class SettingsController extends Controller {
 				$this->appName, 'updategroups', 0);
 		$protectedGroups = $this->config->getValue(
 				$this->appName, 'protected_groups', '');
+		$groupFilter = $this->config->getValue(
+				$this->appName, 'group_filter', '');
 		$expirationPeriod = $this->config->getValue(
 				$this->appName, 'expiration_period', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
@@ -145,6 +147,7 @@ class SettingsController extends Controller {
 				'updateidmap' => $updateidmap,
 				'updategroups' => $updateGroups,
 				'protected_groups' => $protectedGroups,
+				'group_filter' => $groupFilter,
 				'expiration_period' => $expirationPeriod,
 				'required_attrs' => $requiredAttrs
 			),
@@ -191,7 +194,7 @@ class SettingsController extends Controller {
 	 */
 	public function saveBackendConfig($active, $autocreate, $autocreateGroups,
 					  $autoremoveGroups, $autoupdate, $updateGroups,
-					  $protectedGroups, $expiration) {
+					  $protectedGroups, $groupFilter, $expiration) {
 		$this->config->setValue(
 			$this->appName, 'active', $active);
 		$this->config->setValue(
@@ -210,6 +213,21 @@ class SettingsController extends Controller {
 			$this->appName, 'protected_groups', $protectedGroups);
 		$this->config->setValue(
 			$this->appName, 'expiration_period', preg_replace('/[^0-9]/', '', $expiration));
+
+		# Validate regexp
+		if ((preg_match($groupFilter, null) === false)
+		    && ($groupFilter !== '')) {
+			return array(
+				'status' => 'error',
+				'data' => array(
+					'message' => 'Group Filter regexp is invalid.'
+					.' Please refer to:'
+					.' http://php.net/manual/en/reference.pcre.pattern.syntax.php'
+				)
+			);
+		} else {
+			$this->config->setValue($this->appName, 'group_filter', $groupFilter);
+		}
 		return array(
 			'status' => 'success',
 			'data' => array(

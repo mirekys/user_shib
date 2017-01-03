@@ -3,7 +3,7 @@
 	max-width: 40%;
 }
 
-#user_shib_protected_groups_label, #user_shib_expiration_label {
+.indented-label {
 	margin-left: 24px;
 	margin-right: 5px;
 	text-align: left;

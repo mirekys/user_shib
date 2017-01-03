@@ -49,6 +49,7 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 			'updategroups' => true, 'autocreate_groups' => true,
 			'autoremove_groups' => true, 'autoupdate' => true,
 			'protected_groups' => array('admin', 'gallery-users'),
+			'group_filter' => '/.*/',
 			'required_attrs' => array('userid', 'email'));
 		$this->ocConfig = \OC::$server->getConfig();		
 		$this->userManager = \OC::$server->getUserManager();
@@ -163,17 +164,30 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetGroups() {
+
 		$origGrps = $this->serverVars['du_perunVoName'];
-		# 1) Attribute missing
+
+		# 1) Groups are not filtered with disabled group filter
+		$this->assertEquals(explode(';', $origGrps),
+			$this->getAttrMgr()->getGroups());
+
+		# 2) Test group filtering
+		$this->serverVars['du_perunVoName'] = 'agrp1;agrp2;bgrp3';
+		$this->backendConfig['group_filter'] = '/a.*/';
+		$this->assertEquals(array('agrp1', 'agrp2'),
+			$this->getAttrMgr()->getGroups());
+
+		$this->backendConfig['group_filter'] = '/.*/';
+		# 3) Attribute missing
 		unset($this->serverVars['du_perunVoName']);
 		$this->assertFalse($this->getAttrMgr()->getGroups());
-		# 2) Attribute empty
+		# 4) Attribute empty
 		$this->serverVars['du_perunVoName'] = '';
 		$this->assertEquals(array(), $this->getAttrMgr()->getGroups());
-		# 3) Single group present
+		# 5) Single group present
 		$this->serverVars['du_perunVoName'] = 'grp1';
 		$this->assertEquals(array('grp1'), $this->getAttrMgr()->getGroups());
-		# 4) Multiple groups present
+		# 6) Multiple groups present
 		$this->serverVars['du_perunVoName'] = $origGrps;
 		$this->assertEquals(
 			explode(';', $this->serverVars['du_perunVoName']),

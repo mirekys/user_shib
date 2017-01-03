@@ -80,6 +80,7 @@ $(document).ready(function() {
 				autoupdate: $('#user_shib_autoupdate').is(':checked'),
 				updateGroups: $('#user_shib_updategroups').is(':checked'),
 				protectedGroups: $('#user_shib_protected_groups').val(),
+				groupFilter: $('#user_shib_group_filter').val(),
 				expiration: $('#user_shib_expiration').val()
 			},
 			function(response) {

@@ -139,7 +139,13 @@ class UserAttributeManager {
 	 * @return array(string)|false if attribute not found
 	 */
 	public function getGroups() {
-		return $this->getAttribute('group');
+		$filter = $this->backendConfig['group_filter'];
+		$groups = array_filter($this->getAttribute('group'),
+			function($group) use ($filter) {
+				return preg_match($filter, $group) === 1;
+			}
+		);
+		return $groups !== null ? $groups : false ;
 	}
 
 	/**
