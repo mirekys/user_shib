@@ -6,7 +6,7 @@
  * later. See the COPYING file.
  *
  * @author Miroslav Bauer @ CESNET <bauer@cesnet.cz>
- * @copyright Miroslav Bauer @ CESNET 2016
+ * @copyright Miroslav Bauer @ CESNET 2017
  */
 
 namespace OCA\User_Shib\Controller;
