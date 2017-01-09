@@ -290,7 +290,7 @@ style('user_shib', 'style');
 			</input>
 		</p>
 		<p>
-			<label for="user_shib_expiration" class="indented-label" style="display:inline;">
+			<label for="user_shib_expiration" style="display:inline;">
 				<?php p($l->t( 'Expiration period' )); ?>
 			</label>
 			<input type="text" name="user_shib_expiration"
@@ -299,6 +299,15 @@ style('user_shib', 'style');
 			</input>
 			<em><?php p($l->t( 'days' )); ?></em>
 		</p>
+		<p>
+			<label for="user_shib_expiration_warn" style="display:inline;">
+				<?php p($l->t( 'Warn about expiration' )); ?>
+			</label>
+			<input type="text" name="user_shib_expiration_warn"
+				id="user_shib_expiration_warn"
+				value="<?php p($_['expiration_warning']); ?>">
+			</input>
+			<em><?php p($l->t( 'days in advance' )); ?></em>
 		<p>
 			<input name="user_shib_backend_submit"
 				id="user_shib_backend_submit"

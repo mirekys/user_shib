@@ -68,8 +68,8 @@ class ExpirationManagerTest extends PHPUnit_Framework_TestCase {
 		$this->identityMapper->removeIdentity($samlUid);
 	}
 
-	public function testGetUsers2Expire() {
-		$usrs2expire = $this->expMgr->getUsersToExpire(0);
+	public function testGetUsersBelowTreshold() {
+		$usrs2expire = $this->expMgr->getUsersBelowTreshold(1);
 		$this->assertTrue(count($usrs2expire) === 1);
 		$this->assertTrue($usrs2expire[0] instanceof \OC\User\User);
 		$this->assertEquals($this->userid, $usrs2expire[0]->getUID());

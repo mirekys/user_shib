@@ -70,9 +70,10 @@ to ownCloud and some backend options. The meaning of each option is following:
 	* **Autocreate groups** - Create new ownCloud groups based on user's _Groups_ attribute (except for _Protected Groups_).
 	* **Autoremove groups** - Remove user from groups that are not listed in user's _Groups_ attribute (except for _Protected Groups_).
 	* **Protected Groups** - Do not override this OC groups membership by Shibboleth attribute _Groups_.
-	* **Group filter** - Regex to specify which groups from _Groups_ attribute should be recognized by ownCloud.
+	* **Group filter** - Only _Groups_ matching this regex will be recognized by ownCloud.
 * **Update identity mappings on login** - Updates mapping of user's external identities to an ownCloud account on each login (_requires External identities field_).
 * **Expiration period** - Require users to log in using Shibboleth periodically, otherwise the user account expires and becomes disabled. Leave empty to disable expiration.
+* **Expiration warning** - How many days in advance should users be warned about an expiration. Leave empty to disable warnings.
 
 
 ## Personal configuration

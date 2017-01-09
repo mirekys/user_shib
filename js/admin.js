@@ -81,7 +81,8 @@ $(document).ready(function() {
 				updateGroups: $('#user_shib_updategroups').is(':checked'),
 				protectedGroups: $('#user_shib_protected_groups').val(),
 				groupFilter: $('#user_shib_group_filter').val(),
-				expiration: $('#user_shib_expiration').val()
+				expiration: $('#user_shib_expiration').val(),
+				expirationWarn: $('#user_shib_expiration_warn').val()
 			},
 			function(response) {
 				$('#user_shib_backend_submit').attr(

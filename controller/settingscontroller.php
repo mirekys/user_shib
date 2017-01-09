@@ -113,6 +113,8 @@ class SettingsController extends Controller {
 				$this->appName, 'group_filter', '');
 		$expirationPeriod = $this->config->getValue(
 				$this->appName, 'expiration_period', '');
+		$expirationWarn = $this->config->getValue(
+				$this->appName, 'expiration_warning', '');
 		$requiredAttrs = explode(',', $this->config->getValue(
 				$this->appName, 'required_attrs', ''));
 		if ($prefix === '') {
@@ -149,6 +151,7 @@ class SettingsController extends Controller {
 				'protected_groups' => $protectedGroups,
 				'group_filter' => $groupFilter,
 				'expiration_period' => $expirationPeriod,
+				'expiration_warning' => $expirationWarn,
 				'required_attrs' => $requiredAttrs
 			),
 			'blank'
@@ -194,7 +197,8 @@ class SettingsController extends Controller {
 	 */
 	public function saveBackendConfig($active, $autocreate, $autocreateGroups,
 					  $autoremoveGroups, $autoupdate, $updateGroups,
-					  $protectedGroups, $groupFilter, $expiration) {
+					  $protectedGroups, $groupFilter, $expiration,
+					  $expirationWarn) {
 		$this->config->setValue(
 			$this->appName, 'active', $active);
 		$this->config->setValue(
@@ -213,6 +217,8 @@ class SettingsController extends Controller {
 			$this->appName, 'protected_groups', $protectedGroups);
 		$this->config->setValue(
 			$this->appName, 'expiration_period', preg_replace('/[^0-9]/', '', $expiration));
+		$this->config->setValue(
+			$this->appName, 'expiration_warning', preg_replace('/[^0-9]/', '', $expirationWarn));
 
 		# Validate regexp
 		if ((preg_match($groupFilter, null) === false)

@@ -40,33 +40,73 @@ class ExpirationManager {
 	 * for longer than the expiration period.
 	 */
 	public function expireUsers() {
-		$period = $this->backendConfig['expiration_period'];
-		if ($period >= 0) { return; }	
-
+		$expPeriod = $this->backendConfig['expiration_period'];
+		$gracePeriod = $this->backendConfig['expiration_warning'];
 		$currTs = $this->timeFactory->getTime();
-		$expTreshold = $currTs - ($period * 24 * 3600);
+		$expTreshold = $currTs - ($expPeriod * 24 * 3600);
+		$warnTreshold = $expTreshold + ($gracePeriod * 24 * 3600);
 
-		$this->logger->info('Expiring users with last_seen < '
-			. $expTreshold, $this->logCtx);
-		$expired = $this->getUsersToExpire($expTreshold);
-		foreach ($expired as $user) {
-			$this->expire($user);
+		$toBeExpired = $this->getUsersBelowTreshold($expTreshold);
+		$toBeWarned = $this->getUsersBelowTreshold($warnTreshold);
+		$toBeWarned = array_filter($toBeWarned,
+			function($user) use($toBeExpired) {
+				return !in_array($user, $toBeExpired, TRUE);
+			});
+
+		if ($gracePeriod > 0 && $expPeriod > 0) {
+			$this->logger->info(sprintf(
+				'Warning %d users with last_seen < %d',
+				count($toBeWarned), $warnTreshold),
+				$this->logCtx);
+			foreach ($toBeWarned as $user) {
+				$this->warn($user);
+			}
+		}
+		if ($expPeriod > 0) {
+			$this->logger->info(sprintf(
+				'Expiring %d users with last_seen < %d',
+				count($toBeExpired), $expTreshold),
+				$this->logCtx);
+			foreach ($toBeExpired as $user) {
+				$this->expire($user);
+			}
 		}
 	}
 
 	/*
-	 * Returns the users that are past their expiration period
+	 * Returns the users having last_seen older than treshold
 	 *
 	 * @param int expiration treshold timestamp
 	 * @return array(\OC\User\User)
 	 */
-	public function getUsersToExpire($expTreshold) {
-		$uids = $this->identityMapper->findExpired($expTreshold);
+	public function getUsersBelowTreshold($treshold) {
+		$uids = $this->identityMapper->findExpired($treshold);
 		$usrs = array();
 		foreach ($uids as $uid) {
 			$usrs[] = $this->userManager->get($uid);
 		}
 		return $usrs;
+	}
+
+	/*
+	 * Warns a user about the expiration happening soon
+	 *
+	 * @param \OC\User\User $user to be warned
+	 */
+	public function warn($user) {
+		if (!$user) { return; }
+		if (!$user->isEnabled()) { return; }
+
+		$recipient = $user->getEMailAddress();
+		if ($recipient) {
+			$this->mailer->mailExpirationWarning($recipient);
+			$this->logger->info('Sent expiration warning to: '
+				. $user->getUID(), $this->logCtx);
+		} else {
+			$this->logger->error('Couldn\'t send an expiration'
+				. ' warning to: '. $user->getUID(),
+				$this->logCtx);
+		}
 	}
 
 	/*
@@ -81,9 +121,16 @@ class ExpirationManager {
 		$user->setEnabled(false);
 		$user->setQuota('0 B');
 		$user->setDisplayName($user->getDisplayName().' (expired)');
-		$this->mailer->mailExpirationNotice('bauer@cesnet.cz');
-		$this->logger->info('Expired account: '
-			. $user->getUID(), $this->logCtx);
+		$recipient = $user->getEMailAddress();
+		if ($recipient) {
+			$this->mailer->mailExpirationNotice($recipient);
+			$this->logger->info('Expired account: '
+				. $user->getUID(), $this->logCtx);
+		} else {
+			$this->logger->error('Couldn\'t send an expiration'
+				. ' notice to: '. $user->getUID(),
+				$this->logCtx);
+		}
 	}
 
 	/*

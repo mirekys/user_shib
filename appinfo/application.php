@@ -81,6 +81,7 @@ class Application extends App {
 			$updateGroups = $config->getValue($appName, 'updategroups');
 			$groupFilter = $config->getValue($appName, 'group_filter', '/.*/');
 			$expPeriod = (int)$config->getValue($appName, 'expiration_period', 0);
+			$expWarn = (int)$config->getValue($appName, 'expiration_warning', 0);
 			$pgrp = explode('|', $config->getValue(
 					$appName, 'protected_groups', array()));
 			$rqattrs = explode(',', $config->getValue(
@@ -95,6 +96,7 @@ class Application extends App {
 				'protected_groups' => $pgrp,
 				'group_filter' => $groupFilter === ''? '/.*/' : $groupFilter,
 				'expiration_period' => $expPeriod,
+				'expiration_warning' => $expWarn,
 				'required_attrs' => $rqattrs
 			);
 		});

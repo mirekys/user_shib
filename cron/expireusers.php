@@ -15,7 +15,7 @@ use \OCA\User_Shib\AppInfo\Application;
 class ExpireUsers extends \OC\BackgroundJob\TimedJob {
 
 	public function __construct(){
-		$this->setInterval(60);
+		$this->setInterval(3600*24);
 	}
 
 	/**

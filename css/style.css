@@ -15,6 +15,14 @@
 	width: 150px;
 }
 
+#user_shib_expiration {
+	width: 50px;
+}
+
+#user_shib_expiration_warn {
+	width: 50px;
+}
+
 #user_shib_protected_groups {
 	width: auto;
 	min-width: 100px;

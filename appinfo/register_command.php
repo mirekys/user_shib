@@ -11,4 +11,5 @@
 
 $application->add(new OCA\User_Shib\Command\ExpireUsers());
 $application->add(new OCA\User_Shib\Command\Expire());
+$application->add(new OCA\User_Shib\Command\ExpireWarn());
 $application->add(new OCA\User_Shib\Command\Unexpire());

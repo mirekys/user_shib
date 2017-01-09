@@ -17,15 +17,15 @@ use \Symfony\Component\Console\Input\InputInterface;
 use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
 
-class Expire extends Command {
+class ExpireWarn extends Command {
 
 	protected function configure() {
-		$this->setName('user-shib:expire')
-			->setDescription('Disable a user account due to expiration')
+		$this->setName('user-shib:expire-warn')
+			->setDescription('Warns a user about expiration')
 			->addArgument(
 				'userid',
 				InputArgument::REQUIRED,
-				'user account name to be expired'
+				'user to be warned'
 			);
 	}
 
@@ -33,13 +33,13 @@ class Expire extends Command {
 		$app = new Application();
 		$c = $app->getContainer();
 		$uid = $input->getArgument('userid');
-		$output->writeln('Expiring user '. $uid);
+		$output->writeln('Warning user '. $uid);
 		$user = $c->query('UserManager')->get($uid);
 		if (!$user) {
 			$output->writeln("<error>User with this name doesn't exist.</error>");
 			return;
 		} else {
-			$c->query('ExpirationManager')->expire($user);
+			$c->query('ExpirationManager')->warn($user);
 		}
 		$output->writeln('Done.');
 	}
