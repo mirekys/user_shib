@@ -183,7 +183,7 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($this->getAttrMgr()->getGroups());
 		# 4) Attribute empty
 		$this->serverVars['du_perunVoName'] = '';
-		$this->assertEquals(array(), $this->getAttrMgr()->getGroups());
+		$this->assertFalse($this->getAttrMgr()->getGroups());
 		# 5) Single group present
 		$this->serverVars['du_perunVoName'] = 'grp1';
 		$this->assertEquals(array('grp1'), $this->getAttrMgr()->getGroups());

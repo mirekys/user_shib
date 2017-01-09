@@ -140,12 +140,15 @@ class UserAttributeManager {
 	 */
 	public function getGroups() {
 		$filter = $this->backendConfig['group_filter'];
-		$groups = array_filter($this->getAttribute('group'),
+		$groups = $this->getAttribute('group');
+		if (!$groups) { return false; }
+
+		$fgroups = array_filter($groups,
 			function($group) use ($filter) {
 				return preg_match($filter, $group) === 1;
 			}
 		);
-		return $groups !== null ? $groups : false ;
+		return $fgroups !== null ? $fgroups : false ;
 	}
 
 	/**
@@ -257,7 +260,13 @@ class UserAttributeManager {
 	 */
 	public function updateGroups() {
 		$samlGroups = $this->getGroups();
-		if ($samlGroups === false) { return; }
+		if ($samlGroups === false) {
+			if ($this->backendConfig['autoremove_groups'] === false) {
+				return;
+			} else {
+				$samlGroups = array();
+			}
+		}
 
 		$user = $this->getUser();
 		$ocGroups = $this->groupManager->getUserGroupIds($user);
