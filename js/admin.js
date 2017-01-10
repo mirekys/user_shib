@@ -45,6 +45,7 @@ $(document).ready(function() {
 			{
 				prefix : $('#user_shib_prefix').val(),
 				sessid : $('#user_shib_sessid').val(),
+				uuid : $('#user_shib_uniqueid').val(),
 				userid : $('#user_shib_userid').val(),
 				dn : $('#user_shib_dn').val(),
 				firstname : $('#user_shib_firstname').val(),

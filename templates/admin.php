@@ -44,6 +44,22 @@ style('user_shib', 'style');
 			<em><?php p($l->t( 'Required' )); ?></em>
 		</p>
 		<p>
+			<label for="user_shib_uniqueid">
+				<?php p($l->t( 'Unique persistent ID' )); ?>
+			</label>
+			<select name='user_shib_uniqueid' id='user_shib_uniqueid'>
+				<?php foreach ($_['server_vars'] as $svar => $svalue): ?>
+					<option value="<?php p($svar); ?>"
+					<?php if ($svar === $_['mapping_uniqueid']): ?>
+						selected='selected'
+					<?php endif; ?>>
+						<?php p($svar.' ('.$svalue.')'); ?>
+					</option>
+				<?php endforeach;?>
+			</select>
+			<em><?php p($l->t( 'Required' )); ?></em>
+		</p>
+		<p>
 			<label for="user_shib_userid">
 				<?php p($l->t( 'Username' )); ?>
 			</label>

@@ -52,6 +52,7 @@ to ownCloud and some backend options. The meaning of each option is following:
 
 * **Attribute prefix** - prefix for all attributes provided by Shibboleth (aka _attributePrefix_ Shibboleth setting).
 * **Shibboleth Session ID** - attribute that contains a shibboleth session ID of a user.
+* **Unique persistent ID** - attribute that persistently and uniquely identifies a user amongst all others.
 * **Username** - attribute to be used for ownCloud user name.
 * **Full Name** - attribute to be used for display name.
 * **First Name** - alternative attribute to be used for display name.

@@ -37,6 +37,7 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 		$this->userid = 'john@doe.com';
 		$this->serverVars = array(
 			'du_Shib-Session-ID' => 'abcd',
+			'du_unique-id' => '1234@doe.com',
 			'du_eppn' => $this->userid,
 			'du_cn' => 'John Doe',
 			'du_givenName' => 'John',
@@ -112,6 +113,14 @@ class UserAttributeManagerTest extends PHPUnit_Framework_TestCase {
 			$this->getAttrMgr()->getSessionId());
 		unset($this->serverVars['du_Shib-Session-ID']);
 		$this->assertFalse($this->getAttrMgr()->getSessionId());
+	}
+
+	public function testGetUniqueId() {
+		$this->assertEquals(
+			$this->serverVars['du_unique-id'],
+			$this->getAttrMgr()->getUniqueId());
+		unset($this->serverVars['du_unique-id']);
+		$this->assertFalse($this->getAttrMgr()->getUniqueId());
 	}
 
 	public function testGetShibUid() {

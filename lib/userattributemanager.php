@@ -89,6 +89,10 @@ class UserAttributeManager {
 		return $this->getAttributeFirst('userid');
 	}
 
+	public function getUniqueId() {
+		return $this->getAttributeFirst('uniqueid');
+	}
+
 	/**
 	 * Get the internal user id, which corresponds to
 	 * the external Shibboleth user id.

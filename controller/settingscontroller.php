@@ -78,6 +78,8 @@ class SettingsController extends Controller {
 				$this->appName, 'mapping_prefix', '');
 		$sid = $this->config->getValue(
 				$this->appName, 'mapping_sessid', '');
+		$uuid = $this->config->getValue(
+				$this->appName, 'mapping_uniqueid', '');
 		$uid = $this->config->getValue(
 				$this->appName, 'mapping_userid', '');
 		$dn = $this->config->getValue(
@@ -133,6 +135,7 @@ class SettingsController extends Controller {
 			array(
 				'mapping_prefix' => $prefix,
 				'mapping_sessid' => $sid,
+				'mapping_uniqueid' => $uuid,
 				'mapping_userid' => $uid,
 				'mapping_dn' => $dn,
 				'mapping_firstname' => $firstname,
@@ -161,13 +164,15 @@ class SettingsController extends Controller {
 	/**
 	 * Saves the SAML attribute mapping configuration.
 	 */
-	public function saveMappings($prefix, $sessid, $userid, $dn, $firstname,
-				     $surname, $email, $groups,
+	public function saveMappings($prefix, $sessid, $uuid, $userid, $dn,
+				     $firstname, $surname, $email, $groups,
 				     $external, $required) {
 		$this->config->setValue(
 			$this->appName, 'mapping_prefix', $prefix);
 		$this->config->setValue(
 			$this->appName, 'mapping_sessid', $sessid);
+		$this->config->setValue(
+			$this->appName, 'mapping_uniqueid', $uuid);
 		$this->config->setValue(
 			$this->appName, 'mapping_userid', $userid);
 		$this->config->setValue(
