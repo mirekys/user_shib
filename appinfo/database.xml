@@ -45,7 +45,6 @@
 			</field>
 			<index>
 				<name>saml_uid_pk</name>
-				<primary>true</primary>
 				<unique>true</unique>
 				<field>
 					<name>saml_uid</name>

@@ -9,7 +9,7 @@
 	</description>
 	<licence>AGPL</licence>
 	<author>Miroslav Bauer @ CESNET</author>
-	<version>0.0.1</version>
+	<version>1.0</version>
 	<namespace>User_Shib</namespace>
 	<category>other</category>
 	<types>
@@ -17,6 +17,6 @@
 		<authentication/>
 	</types>
 	<dependencies>
-		<owncloud min-version="8.2" />
+		<owncloud min-version="8.2" max-version="9.1" />
 	</dependencies>
 </info>
