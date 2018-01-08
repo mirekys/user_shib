@@ -5,7 +5,7 @@
  * later. See the COPYING file.
  *
  * @author Miroslav Bauer @ CESNET <bauer@cesnet.cz>
- * @copyright Miroslav Bauer @ CESNET 2017
+ * @copyright Miroslav Bauer @ CESNET 2018
  */
 
 /*global OC, $ */

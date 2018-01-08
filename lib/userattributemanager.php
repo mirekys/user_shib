@@ -6,7 +6,7 @@
  * later. See the COPYING file.
  *
  * @author Miroslav Bauer @ CESNET <bauer@cesnet.cz>
- * @copyright Miroslav Bauer @ CESNET 2017 */
+ * @copyright Miroslav Bauer @ CESNET 2018 */
 
 namespace OCA\User_Shib;
 
@@ -62,10 +62,6 @@ class UserAttributeManager {
 			$this->logger->warning(sprintf('User: %s is'
 				. ' missing required attributes: %s',
 				$shibUid, $missingAttrs), $this->logCtx);
-			$this->userMailer->mailLubos(sprintf("Cau Lubosi,\n\n"
-				."heled %s nam nechce sdelit tyhle atributy: %s.\n"
-				."Muzes pls zjednat napravu?\n\nDiky. S laskou,"
-				."\nownCloud", $shibUid, $missingAttrs));
 			return false;
 		}
 		return true;

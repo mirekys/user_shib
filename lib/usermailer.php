@@ -6,7 +6,7 @@
  * later. See the COPYING file.
  *
  * @author Miroslav Bauer @ CESNET <bauer@cesnet.cz>
- * @copyright Miroslav Bauer @ CESNET 2017
+ * @copyright Miroslav Bauer @ CESNET 2018
  */
 
 namespace OCA\User_Shib;
@@ -42,17 +42,6 @@ class UserMailer {
 		$this->secureGen = $secureGenerator;
 		$this->timeFactory = $timeFactory;
 		$this->logCtx = array('app' => $this->appName);
-	}
-
-	/**
-	 * Send message to Lubos
-	 *
-	 * @param string message
-	 */
-	public function mailLubos($message) {
-		$body = new DataDisplayResponse($message);
-		$this->sendMail('Lubos', 'lubos.kopecky@cesnet.cz',
-			'Missing Attribute', $body, $body);
 	}
 
 	/**
