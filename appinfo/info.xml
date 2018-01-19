@@ -17,6 +17,6 @@
 		<authentication/>
 	</types>
 	<dependencies>
-		<owncloud min-version="8.2" max-version="9.1" />
+		<owncloud min-version="8.2" max-version="10.0" />
 	</dependencies>
 </info>
