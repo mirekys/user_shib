@@ -226,8 +226,7 @@ class SettingsController extends Controller {
 			$this->appName, 'expiration_warning', preg_replace('/[^0-9]/', '', $expirationWarn));
 
 		# Validate regexp
-		if ((preg_match($groupFilter, null) === false)
-		    && ($groupFilter !== '')) {
+		if (($groupFilter !== '') && (preg_match($groupFilter, null) === false)) {
 			return array(
 				'status' => 'error',
 				'data' => array(

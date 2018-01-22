@@ -62,6 +62,8 @@ class SessionController extends Controller {
 		}
 
 		$uid = $user->getUID();
+		$this->userSession->createSessionToken($this->request, $uid, $uid, '');
+
 		if ($result && $uid) {
 			$this->logger->info('Logged in user: '. $uid, $this->logCtx);
 			// Prevent redirect loop - do not redirect to itself

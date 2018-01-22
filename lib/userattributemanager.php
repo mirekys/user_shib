@@ -94,7 +94,7 @@ class UserAttributeManager {
 	 * the external Shibboleth user id.
 	 * If 'autocreate' option is enabled, it automatically tries
 	 * to create new identity mapping from SAML uid to OC uid,
-	 * when such a mapping doesn't yet exist
+	 * when such a mapping doesn't exist yet
 	 *
 	 * @param string SAML identity of the user
 	 * @return string|false corresponding OC uid or false if not found
@@ -104,7 +104,13 @@ class UserAttributeManager {
 			$samlUid = $this->getShibUid();
 			if (! $samlUid) { return false; }
 		}
-		return $this->identityMapper->getOcUid($samlUid);
+		$ocUid = $this->identityMapper->getOcUid($samlUid);
+		if (! $ocUid && $this->backendConfig['autocreate']) {
+			$this->identityMapper->addIdentity(
+				$samlUid, $this->getEmail(), time(), $samlUid);
+			$ocUid = $this->identityMapper->getOcUid($samlUid);
+		}
+		return $ocUid;
 	}
 
 	/**
@@ -216,16 +222,14 @@ class UserAttributeManager {
 		if ($user = $this->getUser()) {
 			$uid = $user->getUID();
 			$newEmail = $this->getEmail();
-			$oldEmail = $this->config->getUserValue(
-					$uid, 'settings', 'email');
+			$oldEmail = $user->getEMailAddress();
 			if (($newEmail !== $oldEmail) && $newEmail) {
 				$this->logger->warning(
 					sprintf('Updating user: %s'
 						.' email: %s -> %s',
 						$uid, $oldEmail, $newEmail),
 					$this->logCtx);
-				$this->config->setUserValue(
-					$uid, 'settings', 'email', $newEmail);
+				$user->setEMailAddress($newEmail);
 			}
 		}
 	}
@@ -356,7 +360,11 @@ class UserAttributeManager {
 	private function getAttributeFirst($name) {
 		$val = $this->getAttribute($name);
 		if (is_array($val)) {
-			return $val[0];
+			if (count($val) >= 1) {
+				return $val[0];
+			} else {
+				return false;
+			}
 		} else {
 			return $val;
 		}
@@ -408,6 +416,7 @@ class UserAttributeManager {
 					'mapping_' . $key,
 					false
 		);
+		if (! $value) { return false; }
 		return strpos($value, $prefix) === 0? $value : $prefix . $value;
 	}
 
